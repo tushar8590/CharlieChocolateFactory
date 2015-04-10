@@ -50,7 +50,7 @@ public class SQLQueries {
 	
 	 /*adding new queries for the updater   */
 	 public static String getMasterFeedDataForupdate = "select * from cat_search_product_data where section = ? and updated_flag = 'N' LIMIT 10";
-	 public static String insertElecMultiVendorData = "insert into elec_multi_vendor()";
+	 public static String insertElecMultiVendorData = "insert into elec_multi_vendor() values";
 	 
 	 
 	 
