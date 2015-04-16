@@ -140,7 +140,8 @@ public class TestDataUpdater implements VendorDataUpdater {
 				System.out.println("homeshop18");
 				System.out.println(url);
 				driver.get(url);
-				product.setProductURL("http://clk.omgt5.com/?AID=769090&PID=9421&r="+url);
+				//product.setProductURL("http://clk.omgt5.com/?AID=769090&PID=9421&r="+url);
+				product.setProductURL(url);
 				product.setProductWebsite("HomeShop18");
 				
 				String title = driver.findElement(By.cssSelector("#productTitleInPDP")).getText().toString();
@@ -427,7 +428,8 @@ public class TestDataUpdater implements VendorDataUpdater {
 				i++;
 				System.out.println("Rediff");
 				driver.get(url);
-				product.setProductURL("http://clk.omgt5.com/?AID=769090&PID=8420&r="+url);
+				//product.setProductURL("http://clk.omgt5.com/?AID=769090&PID=8420&r="+url);
+				product.setProductURL(url);
 				product.setProductWebsite("RediffShopping");
 				String title = driver.findElement(By.cssSelector("#div_prdetail_left > div > div.floatL.product_detail > div > div:nth-child(1) > h1 > span")).getText().toString();
 				product.setProductModel(title);
