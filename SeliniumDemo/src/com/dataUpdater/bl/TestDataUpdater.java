@@ -30,8 +30,8 @@ public class TestDataUpdater implements VendorDataUpdater {
 	public TestDataUpdater(List<String> urls,Product product, HtmlUnitDriver driver, String mode,
 			String vendor) {
 		this.urls = urls;
-		this.driver = driver;
-		//this.driver = new HtmlUnitDriver(BrowserVersion.FIREFOX_24);
+		//this.driver = driver;
+		this.driver = new HtmlUnitDriver(BrowserVersion.FIREFOX_24);
 		this.mode = mode;
 		this.product = product;
 		this.vendor = vendor;
@@ -47,6 +47,7 @@ public class TestDataUpdater implements VendorDataUpdater {
 	}
 
 	public void processData() {
+		System.out.println(product.getProductId());
 		if (vendor.equalsIgnoreCase("amazon.in")) {
 			int size = urls.size();
 			int i = 0;
@@ -82,7 +83,7 @@ public class TestDataUpdater implements VendorDataUpdater {
 			} catch (Exception e) {
 				System.out.println("Data Not Available");
 				if(i==size)
-				logError(url,e.getMessage());
+				logError(vendor,url,e.getMessage());
 			}finally{
 				//driver.close();
 			}
@@ -95,6 +96,7 @@ public class TestDataUpdater implements VendorDataUpdater {
 			int i = 0;
 			for(String url : urls){
 			try{
+				i++;
 				System.out.println(this.getClass().getName());
 				driver.get(url);
 				product.setProductURL(url);
@@ -108,9 +110,11 @@ public class TestDataUpdater implements VendorDataUpdater {
 				product.setProductPrice(price);
 				System.out.println(price);
 				
+				try{
 				String starRating = driver.findElement(By.cssSelector("#review_and_rating_summary > span.rating-star > img:nth-child(1)")).getAttribute("alt").toString();
 				product.setProductRating(starRating);
 				System.out.println(starRating);
+				}catch(Exception e){}
 				
 				if(mode.equalsIgnoreCase("insert")){
 					insertData();break;
@@ -122,7 +126,7 @@ public class TestDataUpdater implements VendorDataUpdater {
 			}catch(Exception e){
 				System.out.println("Data Not Available");
 				if(i==size)
-				logError(url,e.getMessage());
+				logError(vendor,url,e.getMessage());
 				}
 		}
 		}
@@ -132,7 +136,7 @@ public class TestDataUpdater implements VendorDataUpdater {
 			int i = 0;
 			for(String url : urls){
 			try{
-				
+				i++;
 				System.out.println("homeshop18");
 				System.out.println(url);
 				driver.get(url);
@@ -151,11 +155,13 @@ public class TestDataUpdater implements VendorDataUpdater {
 /*				String starRating = driver.findElement(By.cssSelector("#avgProductRatingPDPDiv > span")).getText();
 				product.setProductRating(starRating);
 				System.out.println(starRating);
+				
 				*/
+				try{
 				String stock = driver.findElement(By.cssSelector("#btnBuyNow ")).getText().toString();
 				product.setProductStock(stock);
 				System.out.println(stock);
-				
+				}catch(Exception e){}
 				if(mode.equalsIgnoreCase("insert")){
 					insertData();
 					break;
@@ -165,10 +171,10 @@ public class TestDataUpdater implements VendorDataUpdater {
 				}
 				
 			}catch(Exception e){
-				e.printStackTrace();
+				//e.printStackTrace();
 				System.out.println("Data Not Available");
 				if(i==size)
-				logError(url,e.getMessage());
+				logError(vendor,url,e.getMessage());
 				}
 			}
 		}
@@ -178,6 +184,7 @@ public class TestDataUpdater implements VendorDataUpdater {
 			int i = 0;
 			for(String url : urls){
 			try{
+				i++;
 				System.out.println("Croma");
 				driver.get(url);
 				product.setProductURL(url);
@@ -192,11 +199,11 @@ public class TestDataUpdater implements VendorDataUpdater {
 				product.setProductPrice(price);
 				System.out.println(price);
 				
-			
+				try{
 				String stock = driver.findElement(By.cssSelector("#imgBN ")).getAttribute("alt").toString();
 				product.setProductStock(stock);
 				System.out.println(stock);
-				
+				}catch(Exception e){}
 							
 				if(mode.equalsIgnoreCase("insert")){
 					insertData();
@@ -210,7 +217,7 @@ public class TestDataUpdater implements VendorDataUpdater {
 			}catch(Exception e){
 				System.out.println("Data Not Available");
 				if(i==size)
-				logError(url,e.getMessage());
+				logError(vendor,url,e.getMessage());
 				}
 			}
 		}
@@ -220,7 +227,7 @@ public class TestDataUpdater implements VendorDataUpdater {
 			int i = 0;
 			for(String url : urls){
 			try{
-				
+				i++;
 				System.out.println("Ebay");
 				driver.get(url);
 				product.setProductURL(url);
@@ -235,10 +242,11 @@ public class TestDataUpdater implements VendorDataUpdater {
 				product.setProductPrice(price);
 				System.out.println(price);
 				
+				try{
 				String stock = driver.findElement(By.cssSelector("#qtySubTxt > span")).getText();
 				product.setProductStock(stock);
 				System.out.println(stock);
-				
+				}catch(Exception e){}
 							
 				if(mode.equalsIgnoreCase("insert")){
 					insertData();
@@ -251,7 +259,7 @@ public class TestDataUpdater implements VendorDataUpdater {
 			}catch(Exception e){
 				System.out.println("Data Not Available");
 				if(i==size)
-				logError(url,e.getMessage());
+				logError(vendor,url,e.getMessage());
 				}
 			}
 		}
@@ -261,6 +269,7 @@ public class TestDataUpdater implements VendorDataUpdater {
 			int i = 0;
 			for(String url : urls){
 			try{
+				i++;
 				System.out.println("Snapdeal");
 				System.out.println(url);
 				driver.get(url);
@@ -276,11 +285,12 @@ public class TestDataUpdater implements VendorDataUpdater {
 				product.setProductPrice(price);
 				System.out.println(price);
 				
+				try{
 				String starRating =  driver.findElement(By.cssSelector("#pdp > div:nth-child(3) > div.pdpCatWrapper.pdpPage.blk.pdp3Revamp > div.productDeal-right > div.prodtitle-head > div.productTitle > div > div.lfloat > div.lfloat.pdpRatingStars")).getAttribute("ratings").toString();
 				product.setProductRating(starRating);
 				System.out.println(starRating);
 				
-				try{
+			
 				String stock = driver.findElement(By.cssSelector("#BuyButton-1")).getText().toString();
 				product.setProductStock(stock);
 				System.out.println(stock);
@@ -298,10 +308,10 @@ public class TestDataUpdater implements VendorDataUpdater {
 				}
 				
 			}catch(Exception e){
-				e.printStackTrace();
+				//e.printStackTrace();
 				System.out.println("Data Not Available");
 				if(i==size)
-				logError(url,e.getMessage());
+				logError(vendor,url,e.getMessage());
 				}
 			}
 		}
@@ -311,6 +321,7 @@ public class TestDataUpdater implements VendorDataUpdater {
 			int i = 0;
 			for(String url : urls){
 			try{
+				i++;
 				System.out.println("Indiatimes");
 				System.out.println(url);
 				driver.get(url);
@@ -334,10 +345,13 @@ public class TestDataUpdater implements VendorDataUpdater {
 				}catch(Exception e){
 					product.setProductStock("outofstock");
 				}
+				try{
 				String starRating = driver.findElement(By.cssSelector("#contentbody > div.content-wrap > div.productdetailwrapper > div.productcontainer.pdpboxline.clear > div.flt.productcolumone.zur > div > span > span.rating.flt > span > span")).getText().toString();
 				product.setProductRating(starRating);
 				System.out.println(starRating);
-							
+				}catch(Exception e){}	
+				
+				
 				if(mode.equalsIgnoreCase("insert")){
 					insertData();
 					break;
@@ -347,10 +361,10 @@ public class TestDataUpdater implements VendorDataUpdater {
 				}
 				
 			}catch(Exception e){
-				//System.out.println("Data Not Available");
-				e.printStackTrace();
+				System.out.println("Data Not Available");
+				//e.printStackTrace();
 				if(i==size)
-				logError(url,e.getMessage());
+				logError(vendor,url,e.getMessage());
 				}
 			}
 		}
@@ -360,28 +374,33 @@ public class TestDataUpdater implements VendorDataUpdater {
 			int i = 0;
 			for(String url : urls){
 			try{
+				i++;
 				System.out.println("Shopclues");
 				driver.get(url);
 				product.setProductURL(url);
 				product.setProductWebsite("Shopclues");
 				
-				String title = driver.findElement(By.cssSelector("#content > div.content-helper > div.aside-site-content.left > div.site-content > div.product > form > div.product-about > div.name > h1")).getText();
+				String title = driver.findElement(By.cssSelector("#content > div.content-helper > div.aside-site-content.left > div.site-content > div.product > form > div.product-about > div.name > h1")).getText().toString();
 				product.setProductModel(title);
 				System.out.println(title);
 				
+				String prodId= driver.findElement(By.cssSelector("#content > div.content-helper > div.aside-site-content.left > div.site-content > div.product > form > div.product-about > div.name > span > span")).getText();
+				prodId = prodId.replace("SCIN : ", "");
 				
-				String price = driver.findElement(By.cssSelector("#sec_discounted_price_116918")).getText();
+				String price = driver.findElement(By.cssSelector("#line_discounted_price_"+prodId)).getText().toString();
 				product.setProductPrice(price);
 				System.out.println(price);
 				
-				String stock = driver.findElement(By.cssSelector("#in_stock_info_73463640")).getText();
+				try{
+				String stock =  driver.findElement(By.cssSelector("#in_stock_info_"+prodId)).getText();
+
 				product.setProductStock(stock);
 				System.out.println(stock);
 				
-				String starRating = driver.findElement(By.cssSelector("#content > div.content-helper > div.aside-site-content.left > div.site-content > div.product > form > div.product-about > div.reviews > div.rating")).getText();
-				product.setProductRating(starRating);
-				System.out.println(starRating);
-							
+				}catch(Exception e){
+					//String outofStock = driver.findElement(By.cssSelector("#out_of_stock_info_"+prodId+" > font")).getText();
+					product.setProductStock("outofStock");
+				}	
 				if(mode.equalsIgnoreCase("insert")){
 					insertData();
 					break;
@@ -391,10 +410,10 @@ public class TestDataUpdater implements VendorDataUpdater {
 				}
 				
 			}catch(Exception e){
-				//System.out.println("Data Not Available");
-				e.printStackTrace();
+				System.out.println("Data Not Available");
+				//e.printStackTrace();
 				if(i==size)
-				logError(url,e.getMessage());
+				logError(vendor,url,e.getMessage());
 				}
 			}
 		}
@@ -405,6 +424,7 @@ public class TestDataUpdater implements VendorDataUpdater {
 			int i = 0;
 			for(String url : urls){
 			try{
+				i++;
 				System.out.println("Rediff");
 				driver.get(url);
 				product.setProductURL(url);
@@ -418,6 +438,7 @@ public class TestDataUpdater implements VendorDataUpdater {
 				product.setProductPrice(price);
 				System.out.println(price);
 
+				
 				try{
 				String stock = driver.findElement(By.cssSelector("#div_buynow_btn > div > input")).getAttribute("value").toString();
 				product.setProductStock(stock);
@@ -438,7 +459,7 @@ public class TestDataUpdater implements VendorDataUpdater {
 			}catch(Exception e){
 				System.out.println("Data Not Available");
 				if(i==size)
-				 logError(url, e.getMessage());
+					logError(vendor,url,e.getMessage());
 				}
 			}
 		}
@@ -447,6 +468,7 @@ public class TestDataUpdater implements VendorDataUpdater {
 			int i = 0;
 			for(String url : urls){
 			try{
+				i++;
 				System.out.println("ThemobileStore");
 				driver.get(url);
 				product.setProductURL(url);
@@ -460,10 +482,12 @@ public class TestDataUpdater implements VendorDataUpdater {
 				product.setProductPrice(price);
 				System.out.println(price);
 				
+				
+				try{
 				String stock = driver.findElement(By.cssSelector("#product_addtocart_form > div.product-shop > div:nth-child(7) > p")).getText();
 				product.setProductStock(stock);
 				System.out.println(stock);
-				
+				}catch(Exception e){}
 			
 							
 				if(mode.equalsIgnoreCase("insert")){
@@ -477,7 +501,7 @@ public class TestDataUpdater implements VendorDataUpdater {
 			}catch(Exception e){
 				System.out.println("Data Not Available");
 				if(i==size)
-				logError(url,e.getMessage());
+				logError(vendor,url,e.getMessage());
 				}
 			}
 		}
@@ -486,6 +510,7 @@ public class TestDataUpdater implements VendorDataUpdater {
 			int i = 0;
 			for(String url : urls){
 			try{
+				i++;
 				System.out.println("Univercell");
 				driver.get(url);
 				product.setProductURL(url);
@@ -499,6 +524,8 @@ public class TestDataUpdater implements VendorDataUpdater {
 				product.setProductPrice(price);
 				System.out.println(price);
 				
+				
+				try{
 				String stock = driver.findElement(By.cssSelector("#instock > div")).getText();
 				product.setProductStock(stock);
 				System.out.println(stock);
@@ -506,7 +533,7 @@ public class TestDataUpdater implements VendorDataUpdater {
 				String starRating = driver.findElement(By.cssSelector("#ctl00_ContentPlaceHolder1_Ratings_ctl00_divAvgRat")).getText();
 				product.setProductRating(starRating);
 				System.out.println(starRating);
-			
+				}catch(Exception e){}
 							
 				if(mode.equalsIgnoreCase("insert")){
 					insertData();
@@ -518,9 +545,9 @@ public class TestDataUpdater implements VendorDataUpdater {
 				
 			}catch(Exception e){
 				//System.out.println("Data Not Available");
-				e.printStackTrace();
+				//e.printStackTrace();
 				if(i==size)
-				logError(url,e.getMessage());
+				logError(vendor,url,e.getMessage());
 				}
 			}
 		}
@@ -529,6 +556,7 @@ public class TestDataUpdater implements VendorDataUpdater {
 			int i = 0;
 			for(String url : urls){
 			try{
+				i++;
 				System.out.println("Paytm");
 				driver.get(url);
 				/*WebElement myDynamicElement = (new WebDriverWait(driver, 20))
@@ -564,9 +592,9 @@ public class TestDataUpdater implements VendorDataUpdater {
 				
 			}catch(Exception e){
 				//System.out.println("Data Not Available");
-				e.printStackTrace();
+				//e.printStackTrace();
 				if(i==size)
-				logError(url,e.getMessage());
+				logError(vendor,url,e.getMessage());
 				}
 			}
 		}
@@ -615,12 +643,13 @@ public class TestDataUpdater implements VendorDataUpdater {
 	}
 	
 	@Override
-	public boolean logError(String url,String errorMsg){
+	public boolean logError(String vendor,String url,String errorMsg){
 		boolean flag = false;
 		if(this.product!=null){
 			conn = JDBCConnection.getInstance(); 
 			List<String> params = new ArrayList<String>(); 
 			params.add(product.getProductId());
+			params.add(vendor);
 			params.add(url);
 			params.add(errorMsg);
 			String sql = SQLQueries.logElecUnmapped;

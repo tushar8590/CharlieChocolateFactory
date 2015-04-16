@@ -128,11 +128,6 @@ public class CategoryFeedUpdater {
 					        
 						}
 					 
-					    
-					   // System.out.println(urlScoreMap);
-					    
-					    
-					    
 					    // run it for all the highest scores till u get the data 
 					    //  To do that pass the 
 					    
@@ -144,8 +139,15 @@ public class CategoryFeedUpdater {
 					    	scores.add(entry.getValue());
 					    }
 					    Collections.sort(scores,Collections.reverseOrder());
-					    Integer max = cfu.getMax(scores);
+					    
+					    Integer max = 0;
+					    if(scores.size()>0){  // if the urls returned are empty
+					    max = cfu.getMax(scores);
 					   // System.out.println(cfu.getMax(scores));
+					    }else{
+					    	continue;
+					    }
+					    
 					    
 					    iterator = urlScoreMap.entrySet().iterator();
 					    List<String> urls = new ArrayList<String>();
