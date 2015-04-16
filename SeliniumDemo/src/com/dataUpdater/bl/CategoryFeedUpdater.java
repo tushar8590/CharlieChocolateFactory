@@ -67,7 +67,7 @@ public class CategoryFeedUpdater {
 	    				// search in google for the product for specific vendor
 	    			//WebDriver driver = new FirefoxDriver();
 	    			 for(int i = 0 ;i<cfu.vendors.length;i++){
-	  				  HtmlUnitDriver driver = new HtmlUnitDriver(BrowserVersion.FIREFOX_24);
+	  				  HtmlUnitDriver driver = new HtmlUnitDriver(BrowserVersion.CHROME);
 					  driver.setJavascriptEnabled(true);
 					  
 					  String  title = pm.getProductSearchString();
@@ -141,10 +141,12 @@ public class CategoryFeedUpdater {
 					    Collections.sort(scores,Collections.reverseOrder());
 					    
 					    Integer max = 0;
-					    if(scores.size()>0){  // if the urls returned are empty
+					    if(scores.size()>0){
 					    max = cfu.getMax(scores);
 					   // System.out.println(cfu.getMax(scores));
 					    }else{
+					    	    	
+					    	cfu.logError(pm.getProductId(),cfu.vendors[i],"","Not found on Google");
 					    	continue;
 					    }
 					    
@@ -227,5 +229,22 @@ public class CategoryFeedUpdater {
 	    	 }
 	    	 return max;
 	     }
+	     
+	     public boolean logError(String vendor,String productId,String url,String errorMsg){
+	 		boolean flag = false;
+	 		if(productId!=null){
+	 			conn = JDBCConnection.getInstance(); 
+	 			List<String> params = new ArrayList<String>(); 
+	 			params.add(productId);
+	 			params.add(vendor);
+	 			params.add(url);
+	 			params.add(errorMsg);
+	 			String sql = SQLQueries.logElecUnmapped;
+	 			flag = conn.upsertData(sql, params);
+	 			conn.closeConnection();
+	 		}
+	 		return flag;
+	 	}
+
 	
 }

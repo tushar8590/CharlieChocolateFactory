@@ -56,7 +56,7 @@ public class TestDataUpdater implements VendorDataUpdater {
 				i++;
 				System.out.println("Getting the data");
 				driver.get(url);
-				product.setProductURL(url);
+				product.setProductURL(url+"?tag=aapcompare0f-21");
 				product.setProductWebsite("Amazon");
 				String title = driver.findElement(
 						By.cssSelector("#productTitle")).getText();
@@ -99,7 +99,7 @@ public class TestDataUpdater implements VendorDataUpdater {
 				i++;
 				System.out.println(this.getClass().getName());
 				driver.get(url);
-				product.setProductURL(url);
+				product.setProductURL(url+"?trackId=a12");
 				product.setProductWebsite("Infibeam");
 				String title = driver.findElement(By.cssSelector("#title > h1")).getText();
 				product.setProductModel(title);
@@ -140,7 +140,7 @@ public class TestDataUpdater implements VendorDataUpdater {
 				System.out.println("homeshop18");
 				System.out.println(url);
 				driver.get(url);
-				product.setProductURL(url);
+				product.setProductURL("http://clk.omgt5.com/?AID=769090&PID=9421&r="+url);
 				product.setProductWebsite("HomeShop18");
 				
 				String title = driver.findElement(By.cssSelector("#productTitleInPDP")).getText().toString();
@@ -274,7 +274,7 @@ public class TestDataUpdater implements VendorDataUpdater {
 				System.out.println(url);
 				driver.get(url);
 				
-				product.setProductURL(url);
+				product.setProductURL(url+"?aff_id=37358");
 				product.setProductWebsite("Snapdeal");
 				String title = driver.findElement(By.cssSelector("#pdp > div:nth-child(3) > div.pdpCatWrapper.pdpPage.blk.pdp3Revamp > div.productDeal-right > div.prodtitle-head > div.productTitle > div > h1")).getText();
 				product.setProductModel(title);
@@ -427,7 +427,7 @@ public class TestDataUpdater implements VendorDataUpdater {
 				i++;
 				System.out.println("Rediff");
 				driver.get(url);
-				product.setProductURL(url);
+				product.setProductURL("http://clk.omgt5.com/?AID=769090&PID=8420&r="+url);
 				product.setProductWebsite("RediffShopping");
 				String title = driver.findElement(By.cssSelector("#div_prdetail_left > div > div.floatL.product_detail > div > div:nth-child(1) > h1 > span")).getText().toString();
 				product.setProductModel(title);
