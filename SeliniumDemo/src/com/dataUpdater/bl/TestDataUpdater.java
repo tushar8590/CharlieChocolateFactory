@@ -86,6 +86,7 @@ public class TestDataUpdater implements VendorDataUpdater {
 				logError(vendor,url,e.getMessage());
 			}finally{
 				//driver.close();
+				driver.quit();
 			}
 			}
 
@@ -127,6 +128,9 @@ public class TestDataUpdater implements VendorDataUpdater {
 				System.out.println("Data Not Available");
 				if(i==size)
 				logError(vendor,url,e.getMessage());
+				}finally{
+					//driver.close();
+					driver.quit();
 				}
 		}
 		}
@@ -176,6 +180,9 @@ public class TestDataUpdater implements VendorDataUpdater {
 				System.out.println("Data Not Available");
 				if(i==size)
 				logError(vendor,url,e.getMessage());
+				}finally{
+					//driver.close();
+					driver.quit();
 				}
 			}
 		}
@@ -219,6 +226,9 @@ public class TestDataUpdater implements VendorDataUpdater {
 				System.out.println("Data Not Available");
 				if(i==size)
 				logError(vendor,url,e.getMessage());
+				}finally{
+					//driver.close();
+					driver.quit();
 				}
 			}
 		}
@@ -261,6 +271,9 @@ public class TestDataUpdater implements VendorDataUpdater {
 				System.out.println("Data Not Available");
 				if(i==size)
 				logError(vendor,url,e.getMessage());
+				}finally{
+					//driver.close();
+					driver.quit();
 				}
 			}
 		}
@@ -313,6 +326,9 @@ public class TestDataUpdater implements VendorDataUpdater {
 				System.out.println("Data Not Available");
 				if(i==size)
 				logError(vendor,url,e.getMessage());
+				}finally{
+					//driver.close();
+					driver.quit();
 				}
 			}
 		}
@@ -366,6 +382,9 @@ public class TestDataUpdater implements VendorDataUpdater {
 				//e.printStackTrace();
 				if(i==size)
 				logError(vendor,url,e.getMessage());
+				}finally{
+					//driver.close();
+					driver.quit();
 				}
 			}
 		}
@@ -415,6 +434,9 @@ public class TestDataUpdater implements VendorDataUpdater {
 				//e.printStackTrace();
 				if(i==size)
 				logError(vendor,url,e.getMessage());
+				}finally{
+					//driver.close();
+					driver.quit();
 				}
 			}
 		}
@@ -462,6 +484,9 @@ public class TestDataUpdater implements VendorDataUpdater {
 				System.out.println("Data Not Available");
 				if(i==size)
 					logError(vendor,url,e.getMessage());
+				}finally{
+					//driver.close();
+					driver.quit();
 				}
 			}
 		}
@@ -504,6 +529,9 @@ public class TestDataUpdater implements VendorDataUpdater {
 				System.out.println("Data Not Available");
 				if(i==size)
 				logError(vendor,url,e.getMessage());
+				}finally{
+					//driver.close();
+					driver.quit();
 				}
 			}
 		}
@@ -550,6 +578,9 @@ public class TestDataUpdater implements VendorDataUpdater {
 				//e.printStackTrace();
 				if(i==size)
 				logError(vendor,url,e.getMessage());
+				}finally{
+					//driver.close();
+					driver.quit();
 				}
 			}
 		}
