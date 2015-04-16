@@ -230,7 +230,7 @@ public class CategoryFeedUpdater {
 	    	 return max;
 	     }
 	     
-	     public boolean logError(String vendor,String productId,String url,String errorMsg){
+	     public boolean logError(String productId,String vendor,String url,String errorMsg){
 	 		boolean flag = false;
 	 		if(productId!=null){
 	 			conn = JDBCConnection.getInstance(); 
