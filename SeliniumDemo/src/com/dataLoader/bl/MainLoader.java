@@ -4,8 +4,7 @@ import java.util.logging.Level;
 
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
-import com.dataUpdater.bl.AmazonDataUpdater;
-import com.dataUpdater.bl.InfibeamDataUpdater;
+
 import com.dataUpdater.bl.TestDataUpdater;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 
@@ -32,8 +31,8 @@ public class MainLoader {
 	// testt=ing AmazonDataUpdater
 	HtmlUnitDriver driver = new HtmlUnitDriver(BrowserVersion.FIREFOX_24);
 	  driver.setJavascriptEnabled(true);
-	  TestDataUpdater obj = new TestDataUpdater("http://www.homeshop18.com/nokia-c2-03-touch-type-mobile-phone/mobiles/mobile-phones/product:28158273/cid:3027/",driver,"update","homeshop18");
-	obj.processData();
+	//  TestDataUpdater obj = new TestDataUpdater("http://www.homeshop18.com/nokia-c2-03-touch-type-mobile-phone/mobiles/mobile-phones/product:28158273/cid:3027/",driver,"update","homeshop18");
+	//obj.processData();
 	
 	}
 

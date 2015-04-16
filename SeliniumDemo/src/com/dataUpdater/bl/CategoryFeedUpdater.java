@@ -5,12 +5,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NavigableMap;
+import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
@@ -26,7 +28,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.dataLoader.dao.JDBCConnection;
 import com.dataLoader.dao.SQLQueries;
-
 import com.dataLoader.model.VendorProductData;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.dataUpdater.model.Product;
@@ -41,7 +42,7 @@ public class CategoryFeedUpdater {
 	
 	JDBCConnection conn;
 	
-	String[] vendors = {"homeshop18"};
+	String[] vendors = {"infibeam","amazon.in","homeshop18","croma","ebay.in","snapdeal","indiatimes","shopclues","rediff","themobileStore","univercell"};
 	
 	static{
 		java.util.logging.Logger.getLogger("com.gargoylesoftware").setLevel(Level.OFF); 
@@ -70,9 +71,9 @@ public class CategoryFeedUpdater {
 					  driver.setJavascriptEnabled(true);
 					  
 					  String  title = pm.getProductSearchString();
-					 // title = "apple ipad 64GB";
+					// title = "Apple-iPhone-6 Gold-with-64 GB";
 					
-					String search = title+ " + "+cfu.vendors[i] ;
+					String search = title+ " + "+cfu.vendors[i];
 					
 					
 					System.out.println(search);
@@ -88,7 +89,7 @@ public class CategoryFeedUpdater {
 					 List<WebElement> findElements = driver.findElements(By.xpath("//*[@id='rso']//h3/a"));
 
 					    // this are all the links you like to visit
-					 NavigableMap<String,Integer> urlScoreMap = new TreeMap<String,Integer>();
+					 Map<String,Integer> urlScoreMap = new TreeMap<String,Integer>();
 					    for (WebElement webElement : findElements)
 					    {
 					    	String strURL=webElement.getAttribute("href");
@@ -115,10 +116,10 @@ public class CategoryFeedUpdater {
 					    			}
 					    		}
 					    		urlScoreMap.put(strURL, count);
-					    		if(count>=3){
+					    		/*if(count>=3){
 					    		
 					    		break;
-					    		}
+					    		}*/
 					    		count = 0;
 					    		
 					    		
@@ -127,14 +128,42 @@ public class CategoryFeedUpdater {
 					        
 						}
 					 
-					    System.out.println(urlScoreMap);
-					    Entry<String, Integer> lastEntry = urlScoreMap.lastEntry();
-					    System.out.println(lastEntry);
+					    
+					   // System.out.println(urlScoreMap);
+					    
+					    
+					    
+					    // run it for all the highest scores till u get the data 
+					    //  To do that pass the 
+					    
+					    // get teh keys with max value
+					    List<Integer> scores = new ArrayList<Integer>();
+					    Iterator<Entry<String, Integer>> iterator = urlScoreMap.entrySet().iterator();
+					    while(iterator.hasNext()){
+					    	Entry<String,Integer> entry = iterator.next();
+					    	scores.add(entry.getValue());
+					    }
+					    Collections.sort(scores,Collections.reverseOrder());
+					    Integer max = cfu.getMax(scores);
+					   // System.out.println(cfu.getMax(scores));
+					    
+					    iterator = urlScoreMap.entrySet().iterator();
+					    List<String> urls = new ArrayList<String>();
+					    while(iterator.hasNext()){
+					    	Entry<String,Integer> entry = iterator.next();
+					    	if(entry.getValue().equals(max))
+					    	//System.out.println(entry.getKey());
+					    		urls.add(entry.getKey());
+					    }
+					    
+					    
+					   // Entry<String, Integer> lastEntry = urlScoreMap.lastEntry();
+					    //System.out.println(lastEntry);
 					    
 					    /*VendorDataUpdater vdu = VendorFactory.getInstance(cfu.vendors[i],lastEntry.getKey(),driver,"insert");
 		    			vdu.processData();*/
 					    
-					    TestDataUpdater td = new TestDataUpdater(lastEntry.getKey(),pm, driver, "insert", cfu.vendors[i]);
+					    TestDataUpdater td = new TestDataUpdater(urls,pm, driver, "insert", cfu.vendors[i]);
 					    td.processData();
 					    // check the key value with highest count
 					    
@@ -181,5 +210,20 @@ public class CategoryFeedUpdater {
 	     public List<Product> getItemsList() {
 	 		return ProductList;
 	 	}
+	     
+	     
+	     
+	     public Integer getMax(List<Integer> scores){
+	    	
+	    	 Integer max = scores.get(0);
+	    	 for(Integer score:scores){
+	    		 if(score>max){
+	    			
+	    			 max=score;
+	    			 
+	    		 }
+	    	 }
+	    	 return max;
+	     }
 	
 }

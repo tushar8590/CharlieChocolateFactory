@@ -49,10 +49,9 @@ public class SQLQueries {
 	 public static String updatePCISpecFlag = "update cat_search_product_data set spec_resolved = 'T' where product_id = ?";
 	
 	 /*adding new queries for the updater   */
-	 public static String getMasterFeedDataForupdate = "select * from cat_search_product_data where section = ? and updated_flag = 'N' LIMIT 10";
-	 public static String insertElecMultiVendorData = "insert into elec_multi_vendor() values";
-	 
-	 
-	 
-	 
+	 public static String getMasterFeedDataForupdate = "select * from elec_product_master where section = ? and updated_flag = 'N' and multi_vendor ='N'  LIMIT 10";
+	 // insert query for the multiVendor product data
+	 public static String insertElecMultiVendorData = "insert into elec_multi_vendor(id,model,url,website,offer,price,stock,color,rating) values(?,?,?,?,?,?,?,?,?)";
+	 public static String  updateElecProductMaster = "update elec_product_master set updated_flag = 'Y',multi_vendor ='Y' where product_id = ?";
+	 public static String logElecUnmapped = "insert into elec_multi_vendor_unmapped values(?,?,?)";
 }
