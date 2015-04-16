@@ -574,7 +574,7 @@ public class TestDataUpdater implements VendorDataUpdater {
 				}
 				
 			}catch(Exception e){
-				//System.out.println("Data Not Available");
+				System.out.println("Data Not Available");
 				//e.printStackTrace();
 				if(i==size)
 				logError(vendor,url,e.getMessage());
@@ -631,6 +631,7 @@ public class TestDataUpdater implements VendorDataUpdater {
 				}
 			}
 		}
+		System.gc();
 		
 	}
 
