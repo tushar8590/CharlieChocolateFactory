@@ -54,4 +54,7 @@ public class SQLQueries {
 	 public static String insertElecMultiVendorData = "insert into elec_multi_vendor(id,model,url,website,offer,price,stock,color,rating) values(?,?,?,?,?,?,?,?,?)";
 	 public static String  updateElecProductMaster = "update elec_product_master set updated_flag = 'Y',multi_vendor ='Y' where product_id = ?";
 	 public static String logElecUnmapped = "insert into elec_multi_vendor_unmapped values(?,?,?,?)";
+	 public static String deferUpdateElecMultiVendor = "update elec_product_master set multi_vendor = 'D', updated_flag = 'D' where product_id = ?";
+	 
+	 
 }

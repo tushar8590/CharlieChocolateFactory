@@ -26,6 +26,7 @@ public class TestDataUpdater implements VendorDataUpdater {
     private Product product;
 	private String vendor;
     private JDBCConnection conn; 
+    private static boolean deferFlag = false;;
 	
 	public TestDataUpdater(List<String> urls,Product product, HtmlUnitDriver driver, String mode,
 			String vendor) {
@@ -46,7 +47,7 @@ public class TestDataUpdater implements VendorDataUpdater {
 		this.vendor = vendor;
 	}
 
-	public void processData() {
+	public boolean processData() {
 		System.out.println(product.getProductId());
 		if (vendor.equalsIgnoreCase("amazon.in")) {
 			int size = urls.size();
@@ -535,7 +536,7 @@ public class TestDataUpdater implements VendorDataUpdater {
 				}
 			}
 		}
-		if (vendor.equalsIgnoreCase("Univercell")) {
+		/*if (vendor.equalsIgnoreCase("Univercell")) {
 			int size = urls.size();
 			int i = 0;
 			for(String url : urls){
@@ -583,7 +584,7 @@ public class TestDataUpdater implements VendorDataUpdater {
 					driver.quit();
 				}
 			}
-		}
+		}*/
 		if (vendor.equalsIgnoreCase("Paytm")) {
 			int size = urls.size();
 			int i = 0;
@@ -631,7 +632,8 @@ public class TestDataUpdater implements VendorDataUpdater {
 				}
 			}
 		}
-		System.gc();
+		//System.gc();
+		return deferFlag;
 		
 	}
 
@@ -661,6 +663,7 @@ public class TestDataUpdater implements VendorDataUpdater {
 			flag = conn.upsertData(sql, params);
 			System.out.println("Inserted for "+product.getProductId());
 			conn.closeConnection();
+			deferFlag = true;
 		}
 		  
 		  

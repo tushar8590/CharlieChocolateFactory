@@ -42,7 +42,7 @@ public class CategoryFeedUpdater {
 	
 	JDBCConnection conn;
 	
-	String[] vendors = {"infibeam","amazon.in","homeshop18","croma","ebay.in","snapdeal","indiatimes","shopclues","rediff","themobileStore","univercell"};
+	String[] vendors = {"infibeam","amazon.in","homeshop18","croma","ebay.in","snapdeal","indiatimes","shopclues","rediff","themobileStore"};
 	
 	static{
 		java.util.logging.Logger.getLogger("com.gargoylesoftware").setLevel(Level.OFF); 
@@ -78,7 +78,7 @@ public class CategoryFeedUpdater {
 					
 					System.out.println(search);
 					
-					driver.get("https://www.google.co.in");
+					driver.get("http://www.google.co.in");
 					driver.findElement(By.name("q")).sendKeys(search);
 					driver.findElement(By.cssSelector("#tsf > div.tsf-p > div.jsb > center > input[type='submit']:nth-child(1)")).click();
 					
@@ -168,9 +168,16 @@ public class CategoryFeedUpdater {
 		    			vdu.processData();*/
 					    
 					    TestDataUpdater td = new TestDataUpdater(urls,pm, driver, "insert", cfu.vendors[i]);
-					    td.processData();
-					    // check the key value with highest count
-					    
+					   if(!td.processData()){ // if data not inserted for any of the vendor
+						   System.out.println("Deferring status for "+pm.getProductId());
+						   JDBCConnection  conn = JDBCConnection.getInstance(); 
+							List<String> params = new ArrayList<String>(); 
+							params.add(pm.getProductId());
+							String sql = SQLQueries.deferUpdateElecMultiVendor;
+							conn.upsertData(sql, params);
+					   }
+			
+					   
 					    driver.close();
 					    driver.quit();
 	    			} 
