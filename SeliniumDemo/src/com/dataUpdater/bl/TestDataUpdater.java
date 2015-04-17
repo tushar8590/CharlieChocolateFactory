@@ -487,7 +487,7 @@ public class TestDataUpdater implements VendorDataUpdater {
 					logError(vendor,url,e.getMessage());
 				}finally{
 					//driver.close();
-					driver.quit();
+					//driver.quit();
 				}
 			}
 		}

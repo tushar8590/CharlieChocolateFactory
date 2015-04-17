@@ -50,7 +50,7 @@ public class CategoryFeedUpdater {
 	}
 	
 	
-	 public static void main(String ar[]){
+	 public static void main(String ar[]) throws InterruptedException{
 		System.getProperties().put("org.apache.commons.logging.simplelog.defaultlog","fatal");
 	    	 CategoryFeedUpdater cfu = new CategoryFeedUpdater();
 	    	 
@@ -184,6 +184,7 @@ public class CategoryFeedUpdater {
 	    			 
 	    			 
 	    		 }
+	    		 Thread.sleep(3000);
 	    	 }
 	    	 
 	    	 
