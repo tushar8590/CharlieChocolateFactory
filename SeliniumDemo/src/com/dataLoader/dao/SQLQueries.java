@@ -34,7 +34,7 @@ public class SQLQueries {
 	public static String insertPCIFeed = "insert into pci_product_feed values (?,?,?,?,?,?,?,?,?,?,?)";
 	public static String getURLsPCIFeed = "select id,url,website from pci_product_feed where url_mapped = 'F' LIMIT 3000";
 	public static String insertproduct_pci_url_temp = "INSERT INTO product_pci_url_temp VALUES(?,?,?)";
-	public static String updatePCIFeed = "update pci_product_feed set url_mapped = 'T' where id = ? and website = ?";
+	public static String updatePCIFeedForUrlMapping = "update pci_product_feed set url_mapped = 'T' where id = ? and website = ?";
 	
 	
 	public static String googleShoesData ="SELECT product_id,product_title FROM product_details_snd_top_selling WHERE product_sub_cat_1 = ? AND google_map='T' AND product_brand IN('Reebok','Bata','Nike','Adidas','Liberty','Woodland','Valentino','Converse','Lancer','Lotto','RedTape','Puma','Paragon','Relaxo','Action','Fila','Coolers','Force 10','Sharon','Italiano','Lues Alberto','Amblin','Khadims','Genius','Cyke','G Sports','Montee Cairo','Globalite','Wood Style','Alberto Torresi','Aria','Catwalk','Sole Threads','Gliders','Timberland','United Colors of Benetton','Tiptopp','Sparx') ORDER BY product_title";
@@ -49,7 +49,7 @@ public class SQLQueries {
 	 public static String updatePCISpecFlag = "update cat_search_product_data set spec_resolved = 'T' where product_id = ?";
 	
 	 /*adding new queries for the updater   */
-	 public static String getMasterFeedDataForupdate = "select * from elec_product_master where section = ? and updated_flag = 'N' and multi_vendor ='N'  LIMIT 10";
+	 public static String getMasterFeedDataForupdate = "select * from elec_product_master where section = ? and updated_flag = 'N' and multi_vendor ='N'";
 	 // insert query for the multiVendor product data
 	 public static String insertElecMultiVendorData = "insert into elec_multi_vendor(id,model,url,website,offer,price,stock,color,rating) values(?,?,?,?,?,?,?,?,?)";
 	 public static String  updateElecProductMaster = "update elec_product_master set updated_flag = 'Y',multi_vendor ='Y' where product_id = ?";

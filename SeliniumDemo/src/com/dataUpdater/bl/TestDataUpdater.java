@@ -17,7 +17,7 @@ import com.dataLoader.dao.SQLQueries;
 import com.dataUpdater.model.Product;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 
-public class TestDataUpdater implements VendorDataUpdater {
+public class TestDataUpdater implements VendorDataUpdater,Runnable {
 
 	
 	private List<String> urls;
@@ -26,7 +26,7 @@ public class TestDataUpdater implements VendorDataUpdater {
     private Product product;
 	private String vendor;
     private JDBCConnection conn; 
-    private static boolean deferFlag = false;;
+    public  boolean deferFlag = false;;
 	
 	public TestDataUpdater(List<String> urls,Product product, HtmlUnitDriver driver, String mode,
 			String vendor) {
@@ -694,6 +694,13 @@ public class TestDataUpdater implements VendorDataUpdater {
 			conn.closeConnection();
 		}
 		return flag;
+	}
+
+
+	@Override
+	public void run() {
+		this.processData();
+		
 	}
 
 }

@@ -64,5 +64,13 @@ public class Store {
 		ls.add(this.getImage());
 		return ls;
 	}
+	public List<String> getItemsForUpdates(){
+		List<String> ls = new ArrayList<String>();
+		ls.add(this.getPrice());
+		ls.add(this.getOffer());
+		ls.add(this.getStock());
+		return ls;
+	}
+
 
 }
