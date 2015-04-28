@@ -31,10 +31,15 @@ public class SQLQueries {
 	public static String insertProductSpecs = "insert into product_specs(product_id,product_spec_details) VALUES(?,?)";
 	public static String infibeamRawProductMaseter = "SELECT product_id,product_title FROM product_master WHERE product_sub_category = ? and mapped_infi = 'F'";
 	public static String naaptolRawProductMaseter = "SELECT product_id,product_title FROM product_master WHERE product_sub_category = ? and mapped_naaptol = 'F'";
-	public static String insertPCIFeed = "insert into pci_product_feed values (?,?,?,?,?,?,?,?,?,?,?)";
+	public static String insertPCIFeed = "insert into pci_product_feed_temp values (?,?,?,?,?,?,?,?,?,?,?,?)";
 	public static String getURLsPCIFeed = "select id,url,website from pci_product_feed where url_mapped = 'F' LIMIT 3000";
 	public static String insertproduct_pci_url_temp = "INSERT INTO product_pci_url_temp VALUES(?,?,?)";
 	public static String updatePCIFeedForUrlMapping = "update pci_product_feed set url_mapped = 'T' where id = ? and website = ?";
+	
+	// PCIfeed updater queries
+	public static String findProductExist = "select * from pci_product_feed_temp where id = ? and website = ?";
+	public static String updatePCIFeed = "update pci_product_feed_temp set price = ? ,offer = ? , stock = ? where id = ? and website = ?";
+	
 	
 	
 	public static String googleShoesData ="SELECT product_id,product_title FROM product_details_snd_top_selling WHERE product_sub_cat_1 = ? AND google_map='T' AND product_brand IN('Reebok','Bata','Nike','Adidas','Liberty','Woodland','Valentino','Converse','Lancer','Lotto','RedTape','Puma','Paragon','Relaxo','Action','Fila','Coolers','Force 10','Sharon','Italiano','Lues Alberto','Amblin','Khadims','Genius','Cyke','G Sports','Montee Cairo','Globalite','Wood Style','Alberto Torresi','Aria','Catwalk','Sole Threads','Gliders','Timberland','United Colors of Benetton','Tiptopp','Sparx') ORDER BY product_title";

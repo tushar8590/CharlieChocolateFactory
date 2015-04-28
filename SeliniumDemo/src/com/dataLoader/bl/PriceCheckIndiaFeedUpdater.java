@@ -8,12 +8,16 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URL;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.gargoylesoftware.htmlunit.WebConsole.Logger;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
@@ -47,6 +51,7 @@ static JDBCConnection conn;
 
 	public PriceCheckIndiaFeedUpdater() {
 	}
+
 
 	public static void main(String[] args) throws JsonProcessingException, IOException {
 		List<String> urlList = new ArrayList<String>();
@@ -103,40 +108,68 @@ static JDBCConnection conn;
 		  boolean flag = false;
 		  conn = JDBCConnection.getInstance();
 		  try{
-			  Iterator<Product> iterator = list.iterator();
+			  Iterator<Product> productListIterator = list.iterator();
 			  
-	            while (iterator.hasNext()) {
-	                Product p = iterator.next();
+	            while (productListIterator.hasNext()) {
+	                Product p = productListIterator.next();
+	             
+	                String productId = p.getId();
+	                
+	                
 	                List<String> params = new ArrayList<String>();
 	                
 	               // params.add(p.getSharelink());
 	                     
-	                List<Store> stores = p.getStores(); 
-	                if(stores.size() ==0)
+	                List<Store> storesList = p.getStores(); 
+	                if(storesList.size() ==0)
 	                	continue;
-	                Iterator<Store> itr = stores.iterator();
-	                while(itr.hasNext()){
-	                	List<String> storeItems = itr.next().getItemsForUpdates();
-	                	params.addAll(storeItems);
-	                	params.add(p.getId());
-		                params.add(p.getSection());
-		                params.add(p.getBrand());
-		                params.add(p.getModel());
-		                
-	               //System.out.println(params);
-	                    
-	                	//call the JDBCConnection method to save the elements
-	                	flag = conn.upsertData(SQLQueries.insertPCIFeed, params);
-	                	params.removeAll(storeItems);
-	                	if(flag)
-	                		i++;
+	                Iterator<Store> storeListIterator = storesList.iterator();
+	                while(storeListIterator.hasNext()){
+	                	/***
+	                	 * check if the item exist in the database on the basis of id and website
+	                	 */
+	                	
+	                	params.add(productId); params.add(storeListIterator.next().getWebsite());
+	                	ResultSet rs  = conn.executeQuery(SQLQueries.findProductExist, params);
+	                	params.clear();
+	                	if(rs.next()){
+	                		// update for that id - website combo
+	                		List<String> storeItems = storeListIterator.next().getItemsForUpdates();
+		                	params.addAll(storeItems);
+		                	params.add(p.getId());
+			                params.add(storeListIterator.next().getWebsite());
+			                flag = conn.upsertData(SQLQueries.updatePCIFeed, params);
+		                	params.clear();
+		                	if(flag)
+		                		i++;
+	                	}else{
+	                		// insert for that id - website combo
+	                		
+	    	                params.add(p.getId());
+	    	                params.add(p.getSection());
+	    	                params.add(p.getBrand());
+	    	                params.add(p.getModel());
+	    	                params.add(p.getSharelink());
+	                		//insertPCIFeed
+	    	                List<String> storeItems = storeListIterator.next().getItems();
+	    	                params.addAll(storeItems);
+	    	                params.add("F");  // setting the url_mapped flag to F for the newly inserted entries
+	    	                flag = conn.upsertData(SQLQueries.insertPCIFeed, params);
+	    	              	params.clear();
+		                	if(flag)
+		                		i++;
+	                	}
+	                	
+	                	
+	                	
 	                }
 	                
 	            }
 	            System.out.println(i+" records inserted");
 	            conn.closeConnection();
 		  }catch(Exception e){
-			  
+			  e.printStackTrace();
+			
 		  }
 		  
 		  return flag;
