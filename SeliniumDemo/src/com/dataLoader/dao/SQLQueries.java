@@ -38,7 +38,7 @@ public class SQLQueries {
 	
 	// PCIfeed updater queries
 	public static String findProductExist = "select * from pci_product_feed_temp where id = ? and website = ?";
-	public static String updatePCIFeed = "update pci_product_feed_temp set price = ? ,offer = ? , stock = ? where id = ? and website = ?";
+	public static String updatePCIFeed = "update pci_product_feed_temp set price = ? ,offer = ? , stock = ?,url_mapped = 'U' where id = ? and website = ?";
 	
 	
 	

@@ -15,6 +15,8 @@ import java.util.List;
 
 
 
+
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebConsole.Logger;
@@ -75,7 +77,7 @@ static JDBCConnection conn;
 		  
 		 
 		    
-		    for(int x =9;x<=64;x++){
+		    for(int x =1;x<=1;x++){
 		    String path = "#stores > form > fieldset > table > tbody > tr:nth-child("+x+") > td:nth-child(4) > a";
 		    	WebElement urlElem = driver.findElement(By.cssSelector(path));
 		    	//System.out.println(url.getAttribute("href").toString());
@@ -129,29 +131,33 @@ static JDBCConnection conn;
 	                	 * check if the item exist in the database on the basis of id and website
 	                	 */
 	                	
-	                	params.add(productId); params.add(storeListIterator.next().getWebsite());
+	                	//params.add(productId); params.add(storeListIterator.next().getWebsite());
+	                	
+	                	// get the store for analysis
+	                	Store store = storeListIterator.next();
+	                	params.add(productId); params.add(store.getWebsite());
 	                	ResultSet rs  = conn.executeQuery(SQLQueries.findProductExist, params);
-	                	params.clear();
+	                	
 	                	if(rs.next()){
 	                		// update for that id - website combo
-	                		List<String> storeItems = storeListIterator.next().getItemsForUpdates();
+	                		params.clear();
+	                		List<String> storeItems = store.getItemsForUpdates();
 		                	params.addAll(storeItems);
 		                	params.add(p.getId());
-			                params.add(storeListIterator.next().getWebsite());
+			                params.add(store.getWebsite());
 			                flag = conn.upsertData(SQLQueries.updatePCIFeed, params);
 		                	params.clear();
 		                	if(flag)
 		                		i++;
 	                	}else{
 	                		// insert for that id - website combo
-	                		
+	                		params.clear();
 	    	                params.add(p.getId());
 	    	                params.add(p.getSection());
 	    	                params.add(p.getBrand());
 	    	                params.add(p.getModel());
 	    	                params.add(p.getSharelink());
-	                		//insertPCIFeed
-	    	                List<String> storeItems = storeListIterator.next().getItems();
+	                		List<String> storeItems = store.getItems();
 	    	                params.addAll(storeItems);
 	    	                params.add("F");  // setting the url_mapped flag to F for the newly inserted entries
 	    	                flag = conn.upsertData(SQLQueries.insertPCIFeed, params);
@@ -163,7 +169,11 @@ static JDBCConnection conn;
 	                	
 	                	
 	                }
-	                
+	                if(i % 100 == 0)
+	                {
+	                	System.out.println("Executed for 100 rows");
+	                }
+	                System.gc();
 	            }
 	            System.out.println(i+" records inserted");
 	            conn.closeConnection();

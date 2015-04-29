@@ -106,7 +106,9 @@ static JDBCConnection conn;
 			  Iterator<Product> iterator = list.iterator();
 			  
 	            while (iterator.hasNext()) {
+	            	
 	                Product p = iterator.next();
+	                
 	                List<String> params = new ArrayList<String>();
 	                params.add(p.getId());
 	                params.add(p.getSection());
@@ -131,6 +133,7 @@ static JDBCConnection conn;
 	                }
 	                
 	            }
+	            
 	            System.out.println(i+" records inserted");
 	            conn.closeConnection();
 		  }catch(Exception e){
