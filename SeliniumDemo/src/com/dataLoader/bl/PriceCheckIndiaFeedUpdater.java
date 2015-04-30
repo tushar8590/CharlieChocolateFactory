@@ -77,7 +77,7 @@ static JDBCConnection conn;
 		  
 		 
 		    
-		    for(int x =1;x<=1;x++){
+		    for(int x =19;x<=64;x++){
 		    String path = "#stores > form > fieldset > table > tbody > tr:nth-child("+x+") > td:nth-child(4) > a";
 		    	WebElement urlElem = driver.findElement(By.cssSelector(path));
 		    	//System.out.println(url.getAttribute("href").toString());
@@ -149,6 +149,7 @@ static JDBCConnection conn;
 		                	params.clear();
 		                	if(flag)
 		                		i++;
+		                	rs.close();
 	                	}else{
 	                		// insert for that id - website combo
 	                		params.clear();

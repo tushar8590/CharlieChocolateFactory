@@ -34,7 +34,7 @@ public class SQLQueries {
 	public static String insertPCIFeed = "insert into pci_product_feed_temp values (?,?,?,?,?,?,?,?,?,?,?,?)";
 	public static String getURLsPCIFeed = "select id,url,website from pci_product_feed where url_mapped = 'F' LIMIT 3000";
 	public static String insertproduct_pci_url_temp = "INSERT INTO product_pci_url_temp VALUES(?,?,?)";
-	public static String updatePCIFeedForUrlMapping = "update pci_product_feed set url_mapped = 'T' where id = ? and website = ?";
+	public static String updatePCIFeedForUrlMapping = "update pci_product_feed_temp set url_mapped = 'T' where id = ? and website = ?";
 	
 	// PCIfeed updater queries
 	public static String findProductExist = "select * from pci_product_feed_temp where id = ? and website = ?";
@@ -47,7 +47,7 @@ public class SQLQueries {
 	 public static String updategoogleMaster = "update product_details_snd_top_selling set google_map = 'T' where product_id = ?";
 	 
 	 
-	 public static String getPartiallyResolvedURLS = "SELECT * FROM product_pci_url_temp WHERE url LIKE 'http://dl.flipkart.com%'";
+	 public static String getPartiallyResolvedURLS = "SELECT id,url,website FROM pci_product_feed_temp  WHERE url_mapped='F'";
 	 
 	 public static String getURLFromPCIFeed = "select product_id,url from cat_search_product_data where website = ? and  spec_resolved = 'F' LIMIT 5000";
 	 public static String insertPciSpecMaster = "insert into pci_spec_master(product_id,product_spec_details) VALUES(?,?)";

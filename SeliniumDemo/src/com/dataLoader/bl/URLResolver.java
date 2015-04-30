@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Level;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -44,7 +45,10 @@ public class URLResolver {
 		
 	}
 	static String website;
-	
+	static{
+		java.util.logging.Logger.getLogger("com.gargoylesoftware").setLevel(Level.OFF); 
+		System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog");
+	}
 	@SuppressWarnings(value = { "" })
 	public void populateList() throws Exception{
 		
@@ -63,8 +67,6 @@ public class URLResolver {
 					//WebDriver driver = new FirefoxDriver();
 					
 						driver.get(urlOld);
-						
-						
 						WebElement elm = driver.findElement(By.xpath("//*[@id='redirect-div']/p[4]/a"));
 						//System.out.println(elm.getAttribute("href"));
 						
@@ -77,31 +79,31 @@ public class URLResolver {
 					//WebDriverWait wait = new WebDriverWait(driver, 15);
 					//System.out.println(driver.getCurrentUrl());
 					
-		/*			(new WebDriverWait(driver, 10)).until(new ExpectedCondition<Boolean>() {
+					(new WebDriverWait(driver, 10)).until(new ExpectedCondition<Boolean>() {
 					    public Boolean apply(WebDriver d) {
 					    	boolean flag = false;
-					    	System.out.println(d.getCurrentUrl());
+					    	//System.out.println(d.getCurrentUrl());
 					    	if(d.getCurrentUrl().startsWith("http://www."+URLResolver.website)){
-					    		System.out.println("Hey m here");
+					    		
 					    		flag = true;
 					    	}else if(d.getCurrentUrl().startsWith("https://"+URLResolver.website)){
 					    		flag = true;
-					    		System.out.println("Hey m there");
+					    		
 					    	}else
 					    	{
 					    		flag = true;
-					    		System.out.println("Heyyyy");
+					    		
 					    	}
 					    return flag;
 					    }
-					});*/
+					});
 					
 					
 					
 
 					String url = elm.getAttribute("href");
 					driver.close(); driver.quit();
-					System.out.println(url);
+					
 					
 					// save it
 					
@@ -112,6 +114,7 @@ public class URLResolver {
 					params.add(URLResolver.website);
 					params.add(url);
 					if(conn.upsertData(sql, params)){
+						System.out.println(id);
 						System.out.println("Inserted " +url);
 						counter ++;
 					}
@@ -120,7 +123,7 @@ public class URLResolver {
 					params.remove(2);
 					
 					if(conn.upsertData(SQLQueries.updatePCIFeedForUrlMapping, params)){
-						counter++;
+						//counter++;
 					}
 					
 					//conn.closeConnection();
