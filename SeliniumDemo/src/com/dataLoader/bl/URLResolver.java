@@ -119,7 +119,6 @@ public class URLResolver {
 						counter ++;
 					}
 					
-					
 					params.remove(2);
 					
 					if(conn.upsertData(SQLQueries.updatePCIFeedForUrlMapping, params)){

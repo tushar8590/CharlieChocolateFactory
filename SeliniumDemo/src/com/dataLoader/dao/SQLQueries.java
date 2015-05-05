@@ -62,4 +62,8 @@ public class SQLQueries {
 	 public static String deferUpdateElecMultiVendor = "update elec_product_master set multi_vendor = 'D', updated_flag = 'D' where product_id = ?";
 	 
 	 
+	 
+	 // for test
+	 public static String getDesc  = "Select  description from catproduct_omg_all where section = 'Root' and  website ='zovi'";
+	 
 }
