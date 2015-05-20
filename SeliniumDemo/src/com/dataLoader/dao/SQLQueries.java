@@ -65,7 +65,7 @@ public class SQLQueries {
 	 
 	 // for test
 	 public static String getDesc  = "Select  description from catproduct_omg_all where section = 'Root' and  website ='zovi'";
-	 public static String getDataUpdaterFromURLTemp  = "SELECT  id,url,vendor FROM product_pci_url_temp where flag = 'F' LIMIT 1000";
+	 public static String getDataUpdaterFromURLTemp  = "SELECT  id,url,vendor FROM product_pci_url_temp where flag = 'F' LIMIT 5000";
 	 public static String updateURL = "update pci_product_feed_temp set url = ? where id = ? and website = ?";
 	 public static String updateTempURLFlag = "update product_pci_url_temp set flag = 'T' where url = ? and id = ? and vendor = ?";
 	 
