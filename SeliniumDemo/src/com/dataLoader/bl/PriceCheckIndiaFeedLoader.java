@@ -63,13 +63,9 @@ static JDBCConnection conn;
 		    
 		 driver.findElement(By.cssSelector("body > div.container > div.row > div:nth-child(2) > form > fieldset > input.input-large")).sendKeys("tushar8590@gmail.com");;
 		 driver.findElement(By.cssSelector("body > div.container > div.row > div:nth-child(2) > form > fieldset > input.span2")).sendKeys("12345678");;
-		driver.findElement(By.cssSelector("body > div.container > div.row > div:nth-child(2) > form > fieldset > button")).click(); 
-		driver.findElement(By.cssSelector("#catalogs-link > a")).click();   
-		    
-		    
-		  
-		 
-		    
+		 driver.findElement(By.cssSelector("body > div.container > div.row > div:nth-child(2) > form > fieldset > button")).click(); 
+		 driver.findElement(By.cssSelector("#catalogs-link > a")).click();   
+		     
 		    for(int x =9;x<=64;x++){
 		    String path = "#stores > form > fieldset > table > tbody > tr:nth-child("+x+") > td:nth-child(4) > a";
 		    	WebElement urlElem = driver.findElement(By.cssSelector(path));

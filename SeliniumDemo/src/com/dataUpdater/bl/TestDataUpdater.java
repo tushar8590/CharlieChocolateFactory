@@ -126,6 +126,7 @@ public class TestDataUpdater implements VendorDataUpdater,Runnable {
 				}
 				
 			}catch(Exception e){
+				e.printStackTrace();
 				System.out.println("Data Not Available");
 				if(i==size)
 				logError(vendor,url,e.getMessage());
@@ -655,15 +656,16 @@ public class TestDataUpdater implements VendorDataUpdater,Runnable {
 			params.add(product.getProductColor());
 			params.add(product.getProductRating());
 			String sql = SQLQueries.insertElecMultiVendorData;
-			flag = conn.upsertData(sql, params);
+			/*flag = conn.upsertData(sql, params);
 			
 			
 			sql = SQLQueries.updateElecProductMaster;
 			params.clear();params.add(product.getProductId());
 			flag = conn.upsertData(sql, params);
 			System.out.println("Inserted for "+product.getProductId());
-			conn.closeConnection();
-			deferFlag = true;
+			conn.closeConnection();*/
+			deferFlag = true; flag = true;
+			System.out.println(params);
 		}
 		  
 		  
@@ -690,8 +692,8 @@ public class TestDataUpdater implements VendorDataUpdater,Runnable {
 			params.add(url);
 			params.add(errorMsg);
 			String sql = SQLQueries.logElecUnmapped;
-			flag = conn.upsertData(sql, params);
-			conn.closeConnection();
+			//flag = conn.upsertData(sql, params);
+			//conn.closeConnection();
 		}
 		return flag;
 	}

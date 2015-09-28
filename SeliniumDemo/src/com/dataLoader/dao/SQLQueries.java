@@ -54,7 +54,7 @@ public class SQLQueries {
 	 public static String updatePCISpecFlag = "update cat_search_product_data set spec_resolved = 'T' where product_id = ?";
 	
 	 /*adding new queries for the updater   */
-	 public static String getMasterFeedDataForupdate = "select * from elec_product_master where section = ? and updated_flag = 'N' and multi_vendor ='N'";
+	 public static String getMasterFeedDataForupdate = "select * from pci_product_feed_temp where section = ? LIMIT 1";
 	 // insert query for the multiVendor product data
 	 public static String insertElecMultiVendorData = "insert into elec_multi_vendor(id,model,url,website,offer,price,stock,color,rating) values(?,?,?,?,?,?,?,?,?)";
 	 public static String  updateElecProductMaster = "update elec_product_master set updated_flag = 'Y',multi_vendor ='Y' where product_id = ?";
