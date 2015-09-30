@@ -7,8 +7,8 @@ import java.util.List;
 public class JDBCConnection {
 
 	
-	private String host = "jdbc:mysql://103.21.58.156:3306/aapcorjr_aapdb9";
-	//private String host = "jdbc:mysql://103.21.58.156:3306/aapcorjr_dbaapcompare9";
+	//private String host = "jdbc:mysql://103.21.58.156:3306/aapcorjr_aapdb9";
+	private String host = "jdbc:mysql://103.21.58.156:3306/aapcorjr_dbaapcompare9";
 	private String userName = "aapcorjr_adbuser";
 	private String password = "adbuseraccess1@34";
 	private static Connection con;

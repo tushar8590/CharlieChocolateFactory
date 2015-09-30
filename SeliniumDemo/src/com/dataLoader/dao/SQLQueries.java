@@ -57,6 +57,7 @@ public class SQLQueries {
 	 public static String getMasterFeedDataForupdate = "select * from pci_product_feed_temp where section = ? LIMIT 1";
 	 // insert query for the multiVendor product data
 	 public static String insertElecMultiVendorData = "insert into elec_multi_vendor(id,model,url,website,offer,price,stock,color,rating) values(?,?,?,?,?,?,?,?,?)";
+	
 	 public static String  updateElecProductMaster = "update elec_product_master set updated_flag = 'Y',multi_vendor ='Y' where product_id = ?";
 	 public static String logElecUnmapped = "insert into elec_multi_vendor_unmapped values(?,?,?,?)";
 	 public static String deferUpdateElecMultiVendor = "update elec_product_master set multi_vendor = 'D', updated_flag = 'D' where product_id = ?";
@@ -68,5 +69,14 @@ public class SQLQueries {
 	 public static String getDataUpdaterFromURLTemp  = "SELECT  id,url,vendor FROM product_pci_url_temp where flag = 'F' LIMIT 5000";
 	 public static String updateURL = "update pci_product_feed_temp set url = ? where id = ? and website = ?";
 	 public static String updateTempURLFlag = "update product_pci_url_temp set flag = 'T' where url = ? and id = ? and vendor = ?";
+	 
+	 
+	 // updated code for the Shoe Mapper using executor framework 
+	 // Tushar
+	 // 30 Sept 2015
+	 public static String getShoesFKRecords  = "SELECT * FROM `men_footwear_fk` WHERE brand LIKE '%PUMA%' AND  mapping_flag = 'N' AND section  IN ('Casual Shoes','Sports Shoes') GROUP BY model LIMIT 1";
+	   public static String insertShoeMappingData = "insert into shoe_mapping_data(id,model,url,website,offer,price,stock,color,rating) values(?,?,?,?,?,?,?,?,?)";
+	   public static String  updateShoeMappingData = "update men_footwear_fk SET mapping_flag = 'Y' where product_id = ?";
+
 	 
 }

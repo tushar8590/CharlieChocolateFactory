@@ -42,7 +42,8 @@ public class GoogleFeedUpdaterExecutor {
 	
 	JDBCConnection conn;
 	
-	String[] vendors = {"amazon.in","ebay.in","snapdeal","fashionara","yepme","jabong","shopclues","paytm","infibeam"};
+	//String[] vendors = {"amazon.in","ebay.in","snapdeal","fashionara","yepme","jabong","shopclues","paytm","infibeam"};
+	String[] vendors = {"ebay.in"};
 	
 	static{
 		java.util.logging.Logger.getLogger("com.gargoylesoftware").setLevel(Level.OFF); 
@@ -52,7 +53,7 @@ public class GoogleFeedUpdaterExecutor {
 	
 	public static void main(String[] args) {
 	
-		  ExecutorService executor = Executors.newFixedThreadPool(5);
+		  ExecutorService executor = Executors.newFixedThreadPool(1);
 		  List<Future<String>> list = new ArrayList<Future<String>>();
 		System.getProperties().put("org.apache.commons.logging.simplelog.defaultlog","fatal");
    	 //GoogleDataExtractor cfu = new GoogleDataExtractor();
@@ -86,8 +87,9 @@ public class GoogleFeedUpdaterExecutor {
 	            }
 	        }*/
 	        //shut down the executor service now
-	        executor.shutdown();
+	       
 		 }
+		 executor.shutdown();
 	 }
 	}
 	
@@ -97,15 +99,15 @@ public class GoogleFeedUpdaterExecutor {
 	 		boolean result = false;
 	 		ProductList = new ArrayList<Product>();
 	 		
-	 		String mastDataLoadQuery = SQLQueries.getMasterFeedDataForupdate;
-	 		List<String> param = new ArrayList<String>();
-	 				param.add(this.section);
+	 		//List<String> param = new ArrayList<String>();
+	 		String mastDataLoadQuery = SQLQueries.getShoesFKRecords;
+	 			//	param.add(this.section);
 	 				
-	 		ResultSet rs = conn.executeQuery(mastDataLoadQuery,param);
+	 		ResultSet rs = conn.executeQuery(mastDataLoadQuery,null);
 	 		if(rs!=null){
 	 			try {
 	 				while(rs.next()){
-	 						Product pm = new Product(rs.getString("id"),
+	 						Product pm = new Product(rs.getString("product_id"),
 	 						rs.getString("model"));
 	 						ProductList.add(pm);
 	 						
@@ -173,10 +175,10 @@ public class GoogleFeedUpdaterExecutor {
 			@Override
 			public String call() throws Exception {
 				 String  title = pm.getProductSearchString();
-				 title = "Puma Tazon 5 Black Running Shoes ";
+				 //title = "Puma Tazon 5 Black Running Shoes ";
 				
 				String search = title+ " + "+vendor;
-				System.out.println(search);
+				//System.out.println(search);
 				
 				driver.get("http://www.google.co.in");
 				driver.findElement(By.name("q")).sendKeys(search);
@@ -267,16 +269,16 @@ public class GoogleFeedUpdaterExecutor {
 					System.out.println(urls);
 				    
 				    
-		/*	 TestDataUpdater td = new TestDataUpdater(urls,pm, driver, "insert", vendor);
+					ShoePageDataExtractor td = new ShoePageDataExtractor(urls,pm, driver, "insert", vendor);
 				   if(!td.processData()){ // if data not inserted for any of the vendor
-					   System.out.println("Deferring status for "+pm.getProductId());
+					   //System.out.println("Deferring status for "+pm.getProductId());
 					   JDBCConnection  conn = JDBCConnection.getInstance(); 
 						List<String> params = new ArrayList<String>(); 
 						params.add(pm.getProductId());
 						String sql = SQLQueries.deferUpdateElecMultiVendor;
 						//conn.upsertData(sql, params);
 				   }
-		*/
+		
 				   
 				  //  driver.close();
 				    //driver.quit();
