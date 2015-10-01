@@ -104,27 +104,36 @@ public class ShoePageDataExtractor implements VendorDataUpdater, Runnable {
             for (String url : urls) {
                 try {
                     i++;
-                   
+                 
                     driver.get(url);
-                    product.setProductURL(url + "?tag=aapcompare0f-21");
-                    product.setProductWebsite("Ebay");
+                    product.setProductURL(url + "?tag=aapcompare0f-21");  // change this
+                    product.setProductWebsite("Amazon");
                     
                     String title = driver.findElement(
-                        By.xpath("//*[@id='itemTitle']")).getText();
+                        By.xpath("//*[@id='itemTitle']']")).getText();
+                    
+                    
                     product.setProductModel(title);
                     System.out.println(title);
                     String price ="";
-                    if(driver.findElements(By.xpath("//*[@id='prcIsum']")).size() > 0)
+                    if(driver.findElements(By.xpath("//*[@id='prcIsum']")).size() > 0)  // change this
                          price = driver.findElement(By.xpath("//*[@id='prcIsum']']")).getText();
-                    
+                    else
+                        price = driver.findElement(By.xpath("//*[@id='priceblock_saleprice']")).getText();
                         
                     product.setProductPrice(price);
-                   System.out.println(price);
+                    System.out.println(price);
                     
-                    
+                    /*
+                     * String starRating = driver
+                     * .findElement(
+                     * By.cssSelector("#acrPopover > span.a-declarative > a")).toString();
+                     * product.setProductRating(starRating);
+                     * System.out.println(starRating);
+                     */
                     
                     if (mode.equalsIgnoreCase("insert")) {
-                       // insertData();
+                        insertData();
                         break;
                     }
                     else {
@@ -133,10 +142,10 @@ public class ShoePageDataExtractor implements VendorDataUpdater, Runnable {
                     }
                 }
                 catch (Exception e) {
-                  /*  System.out.println("Data Not Available");
+                    System.out.println("Data Not Available");
                     if (i == size)
-                        logError(vendor, url, e.getMessage());*/
-                    e.printStackTrace();
+                        logError(vendor, url, e.getMessage());
+                    
                 }
                 finally {
                     // driver.close();

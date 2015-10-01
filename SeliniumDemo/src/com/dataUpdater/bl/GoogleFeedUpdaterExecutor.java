@@ -53,7 +53,7 @@ public class GoogleFeedUpdaterExecutor {
 	
 	public static void main(String[] args) {
 	
-		  ExecutorService executor = Executors.newFixedThreadPool(1);
+		  ExecutorService executor = Executors.newFixedThreadPool(1);  // change this
 		  List<Future<String>> list = new ArrayList<Future<String>>();
 		System.getProperties().put("org.apache.commons.logging.simplelog.defaultlog","fatal");
    	 //GoogleDataExtractor cfu = new GoogleDataExtractor();
