@@ -78,5 +78,10 @@ public class SQLQueries {
 	   public static String insertShoeMappingData = "insert into shoe_mapping_data(id,model,url,website,offer,price,stock,color,rating) values(?,?,?,?,?,?,?,?,?)";
 	   public static String  updateShoeMappingData = "update men_footwear_fk SET mapping_flag = 'Y' where product_id = ?";
 
-	 
+	 // MSP related queries
+	   // Tushar 
+	   // 1sth October 2015
+	   public static String  insertMspProductUrl = "insert into msp_product_url(url,section) values(?,?)  ";
+	   public static String insertElectronicData = "insert into sp_electronics(model,price,url,image_url,section,mapped_flag) values()";
+	   
 }
