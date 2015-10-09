@@ -83,5 +83,5 @@ public class SQLQueries {
 	   // 1sth October 2015
 	   public static String  insertMspProductUrl = "insert into msp_product_url(url,section) values(?,?)  ";
 	   public static String insertElectronicData = "insert into sp_electronics(model,price,url,image_url,section,mapped_flag) values()";
-	   
+	   public static String getMspUrls  = "SELECT * FROM `msp_product_url`"; 
 }

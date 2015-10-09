@@ -31,9 +31,17 @@ public class MSPUrlExtractor {
 		ExecutorService executor = Executors.newFixedThreadPool(3);
 		  List<Future<String>> list = new ArrayList<Future<String>>();
 		urlMap = new HashMap<String,List<String>>();
-		urlMap.put("mobiles", Arrays.asList("http://www.mysmartprice.com/mobile/pricelist/mobile-price-list-in-india.html#subcategory=mobile","http://www.mysmartprice.com/mobile/pricelist/pages/mobile-price-list-in-india-","76"));
-		urlMap.put("tablets", Arrays.asList("http://www.mysmartprice.com/mobile/pricelist/tablet-price-list-in-india.html#subcategory=tablet&property=1200652-2267506","http://www.mysmartprice.com/mobile/pricelist/pages/tablet-price-list-in-india-2.html","11"));
-		urlMap.put("smatwatches", Arrays.asList("http://www.mysmartprice.com/mobile/pricelist/smart-watches-price-list-in-india.html","http://www.mysmartprice.com/mobile/pricelist/pages/smart-watches-price-list-in-india-2.html","4"));
+		/*urlMap.put("mobiles", Arrays.asList("http://www.mysmartprice.com/mobile/pricelist/mobile-price-list-in-india.html#subcategory=mobile","http://www.mysmartprice.com/mobile/pricelist/pages/mobile-price-list-in-india-","76"));
+		urlMap.put("tablets", Arrays.asList("http://www.mysmartprice.com/mobile/pricelist/tablet-price-list-in-india.html#subcategory=tablet&property=1200652-2267506","http://www.mysmartprice.com/mobile/pricelist/pages/tablet-price-list-in-india-","11"));
+		urlMap.put("smatwatches", Arrays.asList("http://www.mysmartprice.com/mobile/pricelist/smart-watches-price-list-in-india.html","http://www.mysmartprice.com/mobile/pricelist/pages/smart-watches-price-list-in-india-","4"));
+		urlMap.put("Micro SD card", Arrays.asList("http://www.mysmartprice.com/accessories/pricelist/memory-cards-price-list-in-india.html#subcategory=memory-cards&property=1200711-3837733","http://www.mysmartprice.com/accessories/pricelist/pages/memory-cards-price-list-in-india-","6"));
+		urlMap.put("Mobile Battery", Arrays.asList("http://www.mysmartprice.com/accessories/pricelist/batteries-price-list-in-india.html#subcategory=batteries&property=1200704-2267558","http://www.mysmartprice.com/accessories/pricelist/pages/batteries-price-list-in-india-","24"));
+		urlMap.put("Cables", Arrays.asList("http://www.mysmartprice.com/accessories/pricelist/chargers-price-list-in-india.html#subcategory=chargers&property=1200710-2267564","http://www.mysmartprice.com/accessories/pricelist/pages/chargers-price-list-in-india-","12"));
+		*/
+		urlMap.put("Cables", Arrays.asList("http://www.mysmartprice.com/accessories/pricelist/chargers-price-list-in-india.html#subcategory=chargers&property=1200710-2267564","http://www.mysmartprice.com/accessories/pricelist/pages/chargers-price-list-in-india-","12"));
+		urlMap.put("Cables", Arrays.asList("http://www.mysmartprice.com/accessories/pricelist/chargers-price-list-in-india.html#subcategory=chargers&property=1200710-2267564","http://www.mysmartprice.com/accessories/pricelist/pages/chargers-price-list-in-india-","12"));
+		urlMap.put("Cables", Arrays.asList("http://www.mysmartprice.com/accessories/pricelist/chargers-price-list-in-india.html#subcategory=chargers&property=1200710-2267564","http://www.mysmartprice.com/accessories/pricelist/pages/chargers-price-list-in-india-","12"));
+		
 		urlMap.forEach((k,v)->{
 			Callable<String> callable = msp.new  DataExtractor(v.get(0),v.get(1),v.get(2),k);
 			Future<String> future = executor.submit(callable);
