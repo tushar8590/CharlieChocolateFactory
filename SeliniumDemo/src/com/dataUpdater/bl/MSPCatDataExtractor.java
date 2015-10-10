@@ -117,15 +117,17 @@ public class MSPCatDataExtractor {
 				//System.out.println(deliveryTime);
 				
 				// rating
-				rating = driver.findElement(By.xpath("//*[@id='pricetable']/div[3]/div[2]/div[2]/div[2]")).getAttribute("data-callout");
+				rating = driver.findElement(By.xpath("//*[@id='pricetable']/div["+i+"]/div[2]/div[2]/div[2]")).getAttribute("data-callout");
 				// emi avaliable
-				emi = driver.findElement(By.xpath("//*[@id='pricetable']/div[3]/div[2]/div[3]/div[1]")).getText();
+				emi = driver.findElement(By.xpath("//*[@id='pricetable']/div["+i+"]/div[2]/div[3]/div[1]")).getText();
 				// cod
-				cod = driver.findElement(By.xpath("//*[@id='pricetable']/div[4]/div[2]/div[3]/div[3]")).getAttribute("class");
+				cod = driver.findElement(By.xpath("//*[@id='pricetable']/div["+i+"]/div[2]/div[3]/div[3]")).getAttribute("class");
+				
 				//System.out.println("URL = "+vendorUrl);
-				 price = driver.findElement(By.xpath("//*[@id='pricetable']/div[3]/div[2]/div[5]/div[1]/div[1]")).getText();
-				 
+				 price = driver.findElement(By.xpath("//*[@id='pricetable']/div["+i+"]/div[2]/div[5]/div[1]/div[1]")).getText();
+				 									 
 				this.saveData(this.section,(url.substring(url.lastIndexOf("/")+1,url.length())),vendorUrl,price,image,cod,deliveryTime,rating,emi);
+				
 			}
 			
 			}catch(Exception e){
@@ -139,6 +141,9 @@ public class MSPCatDataExtractor {
 			 for(String s:data)
 				 params.add(s);
 			 conn.upsertData(query, params); 
+			 params.clear();
+			 query = SQLQueries.updateMSPUrlFlag;
+			 params.add(url);
 			 params.clear();
 		   // System.out.println(url+" "+ section);
 		}
