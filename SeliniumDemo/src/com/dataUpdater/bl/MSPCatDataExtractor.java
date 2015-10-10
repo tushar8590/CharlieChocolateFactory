@@ -80,6 +80,14 @@ public class MSPCatDataExtractor {
 		 String url;
 		 String section;
 		 WebDriver driver ;
+		 String vendorUrl;
+		 String deliveryTime;
+		 String emi;
+		 String cod;
+		 String rating;
+		 String image;
+		 String price;
+		 
 	   	 public DataExtractor(String baseUrl,String section,WebDriver driver){
 	   		 this.url  = baseUrl;
 	   		 this.section = section;
@@ -97,12 +105,27 @@ public class MSPCatDataExtractor {
 			
 			radioButton.click();
 			}catch(Exception e){}
-			String vendorUrl;
+			
+			
+			// image
+			image = driver.findElement(By.xpath("//*[@id='mspSingleImg']")).getAttribute("src");
 			for(int i =3;i<=13;i++){
 				//System.out.println(driver.findElement(By.xpath("//*[@id='pricetable']/div["+i+"]/div[2]/div[5]/div[2]/div")).getAttribute("data-url"));
 				vendorUrl = driver.findElement(By.xpath("//*[@id='pricetable']/div["+i+"]/div[2]/div[5]/div[2]/div")).getAttribute("data-url");
+				// delivery time
+				deliveryTime = driver.findElement(By.xpath("//*[@id='pricetable']/div[3]/div[2]/div[4]/div[1]")).getText();
+				//System.out.println(deliveryTime);
+				
+				// rating
+				rating = driver.findElement(By.xpath("//*[@id='pricetable']/div[3]/div[2]/div[2]/div[2]")).getAttribute("data-callout");
+				// emi avaliable
+				emi = driver.findElement(By.xpath("//*[@id='pricetable']/div[3]/div[2]/div[3]/div[1]")).getText();
+				// cod
+				cod = driver.findElement(By.xpath("//*[@id='pricetable']/div[4]/div[2]/div[3]/div[3]")).getAttribute("class");
 				//System.out.println("URL = "+vendorUrl);
-				this.saveData(vendorUrl);
+				 price = driver.findElement(By.xpath("//*[@id='pricetable']/div[3]/div[2]/div[5]/div[1]/div[1]")).getText();
+				 
+				this.saveData(this.section,(url.substring(url.lastIndexOf("/")+1,url.length())),vendorUrl,price,image,cod,deliveryTime,rating,emi);
 			}
 			
 			}catch(Exception e){
@@ -111,11 +134,10 @@ public class MSPCatDataExtractor {
 			
 			return null;
 		}
-		private void saveData(String vendorUrl){
-			 query = SQLQueries.insertMspVendorUrl;
-			 params.add(url.substring(url.lastIndexOf("/")+1,url.length()));
-			 params.add(vendorUrl);
-			 params.add(this.section);
+		private void saveData(String ... data){
+			 query = SQLQueries.insertMspProductData;
+			 for(String s:data)
+				 params.add(s);
 			 conn.upsertData(query, params); 
 			 params.clear();
 		   // System.out.println(url+" "+ section);

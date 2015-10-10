@@ -84,5 +84,5 @@ public class SQLQueries {
 	   public static String  insertMspProductUrl = "insert into msp_product_url(url,section) values(?,?)  ";
 	   public static String insertElectronicData = "insert into sp_electronics(model,price,url,image_url,section,mapped_flag) values()";
 	   public static String getMspUrls  = "SELECT * FROM `msp_product_url` LIMIT 10"; 
-	   public static String insertMspVendorUrl = "insert into msp_electronics(model,url,vendor) values (?,?,?)";
+	   public static String insertMspProductData = "insert into msp_electronics(section,model,url,price,image,cod,delivery_time,rating,emi_avaliable) values (?,?,?,?,?,?,?,?,?)";
 }
