@@ -24,7 +24,8 @@ public class MSPCatDataExtractor {
 
 	 JDBCConnection conn;
 	 Map<String,String> urlMap;
-	 
+	String idBase = "AC";
+	int count;
 	public static void main(String[] args) {
 		MSPCatDataExtractor mspcatDe = new MSPCatDataExtractor();
 		mspcatDe.getUrls();
@@ -56,7 +57,9 @@ public class MSPCatDataExtractor {
 				
 			}
 			urlMap.forEach((k,v) -> {
-				DataExtractor de = 	this.new DataExtractor(k,v,driver);
+				idBase = idBase + count;
+				DataExtractor de = 	this.new DataExtractor(k,v,driver,idBase);
+				count++;
 				 try {
 					de.call();
 				} catch (Exception e) {
@@ -87,11 +90,12 @@ public class MSPCatDataExtractor {
 		 String rating;
 		 String image;
 		 String price;
-		 
-	   	 public DataExtractor(String baseUrl,String section,WebDriver driver){
+		String productid;
+	   	 public DataExtractor(String baseUrl,String section,WebDriver driver,String id){
 	   		 this.url  = baseUrl;
 	   		 this.section = section;
 	   		 this.driver = driver;
+	   		 this.productid = id;
 	   		params = new ArrayList<>();
 	   		conn = JDBCConnection.getInstance();
 	   	 }
@@ -109,6 +113,7 @@ public class MSPCatDataExtractor {
 			
 			// image
 			image = driver.findElement(By.xpath("//*[@id='mspSingleImg']")).getAttribute("src");
+			
 			for(int i =3;i<=13;i++){
 				//System.out.println(driver.findElement(By.xpath("//*[@id='pricetable']/div["+i+"]/div[2]/div[5]/div[2]/div")).getAttribute("data-url"));
 				vendorUrl = driver.findElement(By.xpath("//*[@id='pricetable']/div["+i+"]/div[2]/div[5]/div[2]/div")).getAttribute("data-url");
@@ -127,7 +132,7 @@ public class MSPCatDataExtractor {
 				//System.out.println("URL = "+vendorUrl);
 				 price = driver.findElement(By.xpath("//*[@id='pricetable']/div["+i+"]/div[2]/div[5]/div[1]/div[1]")).getText();
 				 									 
-				this.saveData(this.section,(url.substring(url.lastIndexOf("/")+1,url.length())),vendorUrl,price,image,cod,deliveryTime,rating,emi);
+				this.saveData(this.productid,this.section,(url.substring(url.lastIndexOf("/")+1,url.length())),vendorUrl,price,image,cod,deliveryTime,rating,emi);
 				
 			}
 			
