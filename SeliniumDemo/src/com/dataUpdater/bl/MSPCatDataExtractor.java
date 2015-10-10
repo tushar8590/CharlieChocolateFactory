@@ -113,7 +113,8 @@ public class MSPCatDataExtractor {
 				//System.out.println(driver.findElement(By.xpath("//*[@id='pricetable']/div["+i+"]/div[2]/div[5]/div[2]/div")).getAttribute("data-url"));
 				vendorUrl = driver.findElement(By.xpath("//*[@id='pricetable']/div["+i+"]/div[2]/div[5]/div[2]/div")).getAttribute("data-url");
 				// delivery time
-				deliveryTime = driver.findElement(By.xpath("//*[@id='pricetable']/div[3]/div[2]/div[4]/div[1]")).getText();
+				//deliveryTime = driver.findElement(By.xpath("//*[@id='pricetable']/div[3]/div[2]/div[4]/div[1]")).getText();
+				   deliveryTime = driver.findElement(By.xpath("//*[@id='pricetable']/div["+i+"]/div[2]/div[4]/div[1]")).getText();
 				//System.out.println(deliveryTime);
 				
 				// rating
@@ -144,6 +145,7 @@ public class MSPCatDataExtractor {
 			 params.clear();
 			 query = SQLQueries.updateMSPUrlFlag;
 			 params.add(url);
+	          conn.upsertData(query, params); 
 			 params.clear();
 		   // System.out.println(url+" "+ section);
 		}
