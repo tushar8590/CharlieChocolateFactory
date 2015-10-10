@@ -23,19 +23,37 @@ import com.dataLoader.dao.SQLQueries;
 public class MSPCatDataExtractor {
 
 	 JDBCConnection conn;
-	 Map<String,String> urlMap;
-	String idBase = "";
+	 Map<String,List<String>> urlMap;
+	static String idBase = "";
 	int count;
+	private static Map<String,Map<String,List<String>>> mainMap;
+	private Map<String,List<String>> subMap;
+	private List<String> urlList;
 	public static void main(String[] args) {
 		MSPCatDataExtractor mspcatDe = new MSPCatDataExtractor();
 		mspcatDe.getUrls();
-		/*ExecutorService executor = Executors.newFixedThreadPool(1);
+		WebDriver driver = new FirefoxDriver();
+		ExecutorService executor = Executors.newFixedThreadPool(6);
 		  List<Future<String>> list = new ArrayList<Future<String>>();
-			Callable<String> callable = mspcatDe.new DataExtractor("http://www.mysmartprice.com/mobile/samsung-galaxy-tab-3-neo-8gb-(wi-fi-3g)-msp4025", "mobiles");
-			Future<String> future = executor.submit(callable);
+			
+			mainMap.forEach((k,v) ->{
+			//	System.out.println("!!!!MAIN!!!!" + k);
+				v.forEach((key,val) ->{
+					val.forEach(url->{
+						Callable<String> callable = mspcatDe.new DataExtractor(url, key,driver,idBase);
+						Future<String> future = executor.submit(callable);
+						 list.add(future);
+					});
+				}
+			);
+			});
+			
+		//  Callable<String> callable = mspcatDe.new DataExtractor("http://www.mysmartprice.com/mobile/samsung-galaxy-tab-3-neo-8gb-(wi-fi-3g)-msp4025", "mobiles");
+			
             //add Future to the list, we can get return value using Future
-            list.add(future);
-            executor.shutdown();*/
+           
+            executor.shutdown();
+		
 		
 	}
 	
@@ -46,17 +64,35 @@ public class MSPCatDataExtractor {
 	 */
 	public void getUrls(){
 		conn = JDBCConnection.getInstance();
-		String query  = SQLQueries.getMspUrls;
-		ResultSet rs = conn.executeQuery(query, null);
-		WebDriver driver = new FirefoxDriver();
-		urlMap = new HashMap<>();
+		//String query  = SQLQueries.getMspUrls;
+		String mainQuery = "select distinct menu_level1 from msp_product_url";
+		//String query = "SELECT DISTINCT section FROM msp_product_url WHERE  menu_level1 = 'mobiles' ORDER BY section;";
+		ResultSet rs1 = conn.executeQuery(mainQuery, null);
+		
+		mainMap = new HashMap<>();
+		
+		
 		try {
-			while(rs.next()){
-				//System.out.println(rs.getString("url") + "  "+rs.getString("section"));
-				urlMap.put(rs.getString("url"), rs.getString("section"));
-				
+			while(rs1.next()){
+				String subMenuQuery = "SELECT DISTINCT section FROM msp_product_url WHERE  menu_level1 = '"+rs1.getString("menu_level1")+"' ORDER BY section";
+				// get the prodct corr to each section
+				ResultSet rs = conn.executeQuery(subMenuQuery, null);
+				urlMap = new HashMap<>();
+				while(rs.next()){
+						String getProductUrl = "select * from msp_product_url where section = '"+rs.getString("section")+"'";
+						ResultSet rsProductUrl = conn.executeQuery(getProductUrl, null);
+						urlList = new ArrayList<>();
+						while(rsProductUrl.next()){
+							urlList.add(rsProductUrl.getString("url"));
+							
+						}
+						urlMap.put(rs.getString("section"), urlList);
+				}
+				mainMap.put(rs1.getString("menu_level1"), urlMap);
 			}
-			urlMap.forEach((k,v) -> {
+	
+			
+/*			urlMap.forEach((k,v) -> {
 				idBase = "AC" + count;
 				DataExtractor de = 	this.new DataExtractor(k,v,driver,idBase);
 				count++;
@@ -67,12 +103,12 @@ public class MSPCatDataExtractor {
 					e.printStackTrace();
 				}
 			});
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
+*/		
+			} catch (Exception e) {
 			e.printStackTrace();
 		}finally{
-			driver.close();
-			conn.closeConnection();
+			
+			//conn.closeConnection();
 		}
 	}
 	
@@ -98,6 +134,7 @@ public class MSPCatDataExtractor {
 	   		 this.productid = id;
 	   		params = new ArrayList<>();
 	   		conn = JDBCConnection.getInstance();
+	   		 
 	   	 }
 		@Override
 		public Object call() throws Exception {
