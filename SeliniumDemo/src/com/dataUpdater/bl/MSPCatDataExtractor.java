@@ -24,7 +24,7 @@ public class MSPCatDataExtractor {
 
 	 JDBCConnection conn;
 	 Map<String,String> urlMap;
-	String idBase = "AC";
+	String idBase = "";
 	int count;
 	public static void main(String[] args) {
 		MSPCatDataExtractor mspcatDe = new MSPCatDataExtractor();
@@ -57,7 +57,7 @@ public class MSPCatDataExtractor {
 				
 			}
 			urlMap.forEach((k,v) -> {
-				idBase = idBase + count;
+				idBase = "AC" + count;
 				DataExtractor de = 	this.new DataExtractor(k,v,driver,idBase);
 				count++;
 				 try {
