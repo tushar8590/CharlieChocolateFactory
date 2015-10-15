@@ -37,15 +37,15 @@ public class MSPCatDataExtractor {
 		  List<Future<String>> list = new ArrayList<Future<String>>();
 			
 			mainMap.forEach((k,v) ->{
-			//	System.out.println("!!!!MAIN!!!!" + k);
-				v.forEach((key,val) ->{
+				System.out.println(k+"  "+v);
+				/*v.forEach((key,val) ->{
 					val.forEach(url->{
 						Callable<String> callable = mspcatDe.new DataExtractor(url, key,driver,idBase);
 						Future<String> future = executor.submit(callable);
 						 list.add(future);
 					});
 				}
-			);
+			);*/
 			});
 			
 		//  Callable<String> callable = mspcatDe.new DataExtractor("http://www.mysmartprice.com/mobile/samsung-galaxy-tab-3-neo-8gb-(wi-fi-3g)-msp4025", "mobiles");
@@ -79,7 +79,7 @@ public class MSPCatDataExtractor {
 				ResultSet rs = conn.executeQuery(subMenuQuery, null);
 				urlMap = new HashMap<>();
 				while(rs.next()){
-						String getProductUrl = "select * from msp_product_url where section = '"+rs.getString("section")+"'";
+						String getProductUrl = "select * from msp_product_url where section = '"+rs.getString("section")+"' LIMIT 3";
 						ResultSet rsProductUrl = conn.executeQuery(getProductUrl, null);
 						urlList = new ArrayList<>();
 						while(rsProductUrl.next()){
