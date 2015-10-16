@@ -2,7 +2,9 @@ package com.dataUpdater.bl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -33,7 +35,7 @@ public class MSPCatDataExtractor {
 	}
 	JDBCConnection conn;
 	Map<String, List<String>> urlMap;
-	static String idBase = "";
+	static String idBase = "ACNEW";
 	int count;
 	private static Map<String, Map<String, List<String>>> mainMap;
 	private Map<String, List<String>> subMap;
@@ -46,18 +48,21 @@ public class MSPCatDataExtractor {
 		ExecutorService executor = Executors.newFixedThreadPool(6);
 		List<Future<String>> list = new ArrayList<Future<String>>();
 
-		mainMap.forEach((k, v) -> {
+		for(Map.Entry<String,Map<String,List<String>>> topLevelMenuMapEntry:mainMap.entrySet()){
+		    
+		
 			// 
-			v.forEach((key, val) -> {
-				System.out.println(k+"  "+val.size());
-				Callable<String> callable = mspcatDe.new DataExtractor(val,
-						key, driver, idBase);
+		    for(Map.Entry<String, List<String>> sectionLevelEntry:topLevelMenuMapEntry.getValue().entrySet() ){
+			
+				//System.out.println(sectionLevelEntry.getKey()+"  "+sectionLevelEntry.getValue().size());
+		    
+				Callable<String> callable = mspcatDe.new DataExtractor(sectionLevelEntry.getValue(),sectionLevelEntry.getKey(), driver, idBase);
 				Future<String> future = executor.submit(callable);
 				list.add(future);
-
-			});
-		});
-
+		    }
+			
+		
+		}
 		// Callable<String> callable = mspcatDe.new
 		// DataExtractor("http://www.mysmartprice.com/mobile/samsung-galaxy-tab-3-neo-8gb-(wi-fi-3g)-msp4025",
 		// "mobiles");
@@ -74,9 +79,10 @@ public class MSPCatDataExtractor {
 	 * @author Tushar mainMap[urlMap,urlList]
 	 */
 	public void getUrls() {
+	    System.out.println("Starting at "+new Timestamp(new Date().getTime()));
 		conn = JDBCConnection.getInstance();
 		// String query = SQLQueries.getMspUrls;
-		String mainQuery = "select distinct menu_level1 from msp_product_url";
+		String mainQuery = "select distinct menu_level1 from msp_product_url where temp_flag = 'F'";
 		// String query =
 		// "SELECT DISTINCT section FROM msp_product_url WHERE  menu_level1 = 'mobiles' ORDER BY section;";
 		ResultSet rs1 = conn.executeQuery(mainQuery, null);
@@ -86,13 +92,13 @@ public class MSPCatDataExtractor {
 		try {
 			while (rs1.next()) {
 				String subMenuQuery = "SELECT DISTINCT section FROM msp_product_url WHERE  menu_level1 = '"
-						+ rs1.getString("menu_level1") + "' ORDER BY section";
+						+ rs1.getString("menu_level1") + "' and temp_flag = 'F' ORDER BY section";
 				// get the prodct corr to each section
 				ResultSet rs = conn.executeQuery(subMenuQuery, null);
 				urlMap = new HashMap<>();
 				while (rs.next()) {
 					String getProductUrl = "select * from msp_product_url where section = '"
-							+ rs.getString("section") + "' LIMIT 3";
+							+ rs.getString("section") + "' and temp_flag = 'F'";
 					ResultSet rsProductUrl = conn.executeQuery(getProductUrl,
 							null);
 					urlList = new ArrayList<>();
@@ -111,8 +117,10 @@ public class MSPCatDataExtractor {
 			 * de.call(); } catch (Exception e) { // TODO Auto-generated catch
 			 * block e.printStackTrace(); } });
 			 */
+			System.out.println("Ending  at "+new Timestamp(new Date().getTime()));
 		} catch (Exception e) {
-			e.printStackTrace();
+		    System.out.println("Error at "+new Timestamp(new Date().getTime()));
+			e.getMessage();
 		} finally {
 
 			// conn.closeConnection();
@@ -135,8 +143,7 @@ public class MSPCatDataExtractor {
 		String price;
 		String productid;
 
-		public DataExtractor(List<String> baseUrl, String section,
-				HtmlUnitDriver driver, String id) {
+		public DataExtractor(List<String> baseUrl, String section,HtmlUnitDriver driver, String id) {
 			this.url = baseUrl;
 			this.section = section;
 			this.driver = driver;
@@ -222,7 +229,9 @@ public class MSPCatDataExtractor {
 
 		private void saveData(String currentUrl, String... data) {
 			query = SQLQueries.insertMspProductData;
-			
+			for(String s : data){
+			    params.add(s);
+			}
 			
 			 conn.upsertData(query, params);
 			params.clear();
