@@ -1,6 +1,9 @@
 package com.dataUpdater.bl;
 
+import java.util.List;
+
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 public class CssTester {
@@ -31,6 +34,11 @@ public class CssTester {
         //cod
         System.out.println(driver.findElement(By.xpath("//*[@id='pricetable']/div[4]/div[2]/div[3]/div[3]")).getAttribute("class"));
             //this.saveData(productUrl, section);
+        List<WebElement> elems = driver.findElements(By.xpath("//*[@id='msp_body']/div/div[4]/div/div[1]/div/table"));
+       System.out.println(elems.size());
+        for(int i =1;i<=44;i++){
+        	System.out.println(driver.findElement(By.xpath("//*[@id='msp_body']/div/div[4]/div/div[1]/div/table/tbody/tr["+i+"]")).getText());
+        }
         driver.close();
     }
     
