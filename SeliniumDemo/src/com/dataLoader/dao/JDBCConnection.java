@@ -150,7 +150,7 @@ public class JDBCConnection {
 			}
 		}
 		
-			//System.out.println(query);
+//			/System.out.println(query);
 			if(pstmt.executeUpdate()>0){
 				flag = true;
 			}

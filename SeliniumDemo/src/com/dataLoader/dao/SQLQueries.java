@@ -87,4 +87,8 @@ public class SQLQueries {
 	   public static String insertMspProductData = "insert into msp_electronics(product_id,section,model,url,price,image,cod,delivery_time,rating,emi_avaliable,temp_flag) values (?,?,?,?,?,?,?,?,?,?,'X')";
 	   public static String updateMSPUrlFlag = "UPDATE msp_product_url SET temp_flag = 'X' where url = ?"; // X stands for Data Found
 	   public static String updateSkipForNoData = "UPDATE msp_product_url SET temp_flag = 'N' where url = ?";  // N stands for No data Found
+	   
+	   // MSP related QUeries for unresolved Urls
+	   public static String getUnresolvedUrls = "SELECT id,url,website FROM msp_electronics  WHERE url_mapped='F'  LIMIT 1";
+	   public static String udpateMspUResolvedUrl = "update msp_electronics set resolved_url = ?, url_mapped = 'T' where id = ?";
 }
