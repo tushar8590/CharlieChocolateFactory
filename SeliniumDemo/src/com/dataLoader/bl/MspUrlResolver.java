@@ -81,16 +81,17 @@ public class MspUrlResolver {
                    
                     String resolvedUrl = driver.getCurrentUrl();
                     
+                    System.out.println(resolvedUrl.substring(0, resolvedUrl.indexOf("?"))+"?tag=aapcompare0f-21");
                     String updateQUery = SQLQueries.udpateMspUResolvedUrl;
                    
-                    params.add(resolvedUrl);
+                    /*params.add(resolvedUrl);
                     params.add(id);
                    
                     if(conn.upsertData(updateQUery, params)){
                         counter ++;
                     }
                     
-                    params.clear();
+                    params.clear();*/
                     
 
                     
