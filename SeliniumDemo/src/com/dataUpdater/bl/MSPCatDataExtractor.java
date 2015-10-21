@@ -57,8 +57,17 @@ public class MSPCatDataExtractor {
 				//System.out.println(sectionLevelEntry.getKey()+"  "+sectionLevelEntry.getValue().size());
 		    
 				Callable<String> callable = mspcatDe.new DataExtractor(sectionLevelEntry.getValue(),sectionLevelEntry.getKey(), driver, idBase);
+				
 				Future<String> future = executor.submit(callable);
 				list.add(future);
+		    	
+		    	/*DataExtractor obj= mspcatDe.new DataExtractor(sectionLevelEntry.getValue(),sectionLevelEntry.getKey(), driver, idBase);
+		    	try {
+					obj.call();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} */
 		    }
 			
 		
@@ -69,7 +78,7 @@ public class MSPCatDataExtractor {
 
 		// add Future to the list, we can get return value using Future
 		System.out.println("Shutting down ececutor");
-		executor.shutdown();
+		//executor.shutdown();
 
 	}
 
@@ -159,24 +168,39 @@ public class MSPCatDataExtractor {
 			Iterator<String> itr = url.iterator();
 			String currentUrl = "";
 			while (itr.hasNext()) {
+				
 				currentUrl = itr.next();
+				
 				try {
+					driver = new HtmlUnitDriver(BrowserVersion.FIREFOX_24);
+					
 					// get to the page
 					driver.get(currentUrl);
-					try {
+					/*try {
 						WebElement radioButton = driver.findElement(By
 								.xpath("//*[@id='online_stores']"));
 
 						radioButton.click();
 					} catch (Exception e) {
+						e.printStackTrace();
 					}
-
+*/
 					// image
+					
+					try{
+						
 					image = driver.findElement(
 							By.xpath("//*[@id='mspSingleImg']")).getAttribute(
 							"src");
+					
+					}catch(Exception e){
+						System.out.println("Inside Exception");
+						saveSkipForNoData(currentUrl);
+						continue;
 
+					}
 					for (int i = 3; i <= 13; i++) {
+						
 						// System.out.println(driver.findElement(By.xpath("//*[@id='pricetable']/div["+i+"]/div[2]/div[5]/div[2]/div")).getAttribute("data-url"));
 						vendorUrl = driver.findElement(
 								By.xpath("//*[@id='pricetable']/div[" + i
@@ -211,16 +235,19 @@ public class MSPCatDataExtractor {
 										+ "]/div[2]/div[5]/div[1]/div[1]"))
 								.getText();
 
-						this.saveData(currentUrl, this.productid, this.section,
-								(currentUrl.substring(
-										currentUrl.lastIndexOf("/") + 1,
-										currentUrl.length())), vendorUrl,
-								price, image, cod, deliveryTime, rating, emi);
-
+						this.saveData(currentUrl, this.productid, this.section,(currentUrl.substring(currentUrl.lastIndexOf("/") + 1,currentUrl.length())), vendorUrl,price, image, cod, deliveryTime, rating, emi);
+						
 					}
+					
 
 				} catch (Exception e) {
-					// e.printStackTrace();
+					e.getMessage();
+					saveSkipForNoData(currentUrl);
+					continue;
+					
+					
+				}finally{
+					driver.quit();
 				}
 			}
 
@@ -228,6 +255,7 @@ public class MSPCatDataExtractor {
 		}
 
 		private void saveData(String currentUrl, String... data) {
+			System.out.println("Data Exists");
 			query = SQLQueries.insertMspProductData;
 			for(String s : data){
 			    params.add(s);
@@ -241,6 +269,14 @@ public class MSPCatDataExtractor {
 			 conn.upsertData(query, params);
 			params.clear();
 			// System.out.println(url+" "+ section);
+		}
+		
+		private void saveSkipForNoData(String currentUrl){
+			System.out.println("No Data");
+			query = SQLQueries.updateSkipForNoData; 
+			params.add(currentUrl);
+			 conn.upsertData(query, params);
+				params.clear();
 		}
 	}
 

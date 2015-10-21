@@ -85,5 +85,6 @@ public class SQLQueries {
 	   public static String insertElectronicData = "insert into sp_electronics(model,price,url,image_url,section,mapped_flag) values()";
 	   public static String getMspUrls  = "SELECT * FROM `msp_product_url` -- where temp_flag = 'N' "; 
 	   public static String insertMspProductData = "insert into msp_electronics(product_id,section,model,url,price,image,cod,delivery_time,rating,emi_avaliable,temp_flag) values (?,?,?,?,?,?,?,?,?,?,'X')";
-	   public static String updateMSPUrlFlag = "UPDATE msp_product_url SET temp_flag = 'X' where url = ?";
+	   public static String updateMSPUrlFlag = "UPDATE msp_product_url SET temp_flag = 'X' where url = ?"; // X stands for Data Found
+	   public static String updateSkipForNoData = "UPDATE msp_product_url SET temp_flag = 'N' where url = ?";  // N stands for No data Found
 }
