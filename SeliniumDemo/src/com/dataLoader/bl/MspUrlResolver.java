@@ -47,11 +47,12 @@ public class MspUrlResolver {
         System.out.println("Starting at "+new Timestamp(new Date().getTime()));
         HtmlUnitDriver driver = new HtmlUnitDriver(BrowserVersion.CHROME);
         List<String> params = new ArrayList<String>();
+        String id = "";
             while(rs.next()){
                 try {
                     String urlOld = rs.getString("url");
                     MspUrlResolver.website = rs.getString("website");
-                    String id = rs.getString("id");
+                    id = rs.getString("id");
                   //  HtmlUnitDriver driver = new HtmlUnitDriver(BrowserVersion.CHROME);
                     driver.get(urlOld);
                    
@@ -79,24 +80,41 @@ public class MspUrlResolver {
                     // save it
                   //  temp 
                    
-                    String resolvedUrl = driver.getCurrentUrl();
+                    StringBuilder resolvedUrl = new StringBuilder(driver.getCurrentUrl().substring(0, driver.getCurrentUrl().indexOf("?")));
+                  
                     
-                    System.out.println(resolvedUrl.substring(0, resolvedUrl.indexOf("?"))+"?tag=aapcompare0f-21");
+                    if(MspUrlResolver.website.equalsIgnoreCase("amazon"))
+                        resolvedUrl.append("?tag=aapcompare0f-21");
+                    else if(MspUrlResolver.website.equalsIgnoreCase("flipkart"))
+                        resolvedUrl.append("?affid=a123pp9aa");
+                    else if(MspUrlResolver.website.equalsIgnoreCase("infibeam"))
+                        resolvedUrl.append("?trackId=a12");
+                    else if(MspUrlResolver.website.equalsIgnoreCase("snapdeal"))
+                        resolvedUrl.append("?aff_id=37358");
+                    else if(MspUrlResolver.website.equalsIgnoreCase("shopclues"))
+                        resolvedUrl.append("?ID:756");
+                    else if(MspUrlResolver.website.equalsIgnoreCase("indiatimes") || MspUrlResolver.website.equalsIgnoreCase("paytm"))
+                        resolvedUrl =   new StringBuilder("http://clk.omgt5.com/?AID=769090&PID=11365&r=").append(resolvedUrl);
+                    
+                    
+                    
                     String updateQUery = SQLQueries.udpateMspUResolvedUrl;
                    
-                    /*params.add(resolvedUrl);
+                    params.add(resolvedUrl.toString());
                     params.add(id);
                    
                     if(conn.upsertData(updateQUery, params)){
                         counter ++;
                     }
                     
-                    params.clear();*/
+                    params.clear();
                     
 
                     
                 } catch (SQLException e) {
                     e.printStackTrace();
+                    deferUpdate(params, id);
+                    continue;
                 }finally{
                     //conn.closeConnection();
                     
@@ -110,6 +128,13 @@ public class MspUrlResolver {
         
             driver.close(); driver.quit();
 
+    }
+
+    private void deferUpdate(List<String> params, String id) {
+        String updateQUery = SQLQueries.udpateMspUResolvedUrlDeffered;
+        params.add(id);
+        conn.upsertData(updateQUery, params);
+        params.clear();
     }
     
     public static void main(String[] args) {
