@@ -79,9 +79,11 @@ public class MspUrlResolver {
                     
                     // save it
                   //  temp 
-                   
-                    StringBuilder resolvedUrl = new StringBuilder(driver.getCurrentUrl().substring(0, driver.getCurrentUrl().indexOf("?")));
-                  
+                    StringBuilder resolvedUrl = null;
+                    if(driver.getCurrentUrl().contains("?"))
+                    	resolvedUrl = new StringBuilder(driver.getCurrentUrl().substring(0, driver.getCurrentUrl().indexOf("?")));
+                    else
+                    	resolvedUrl =  new StringBuilder(driver.getCurrentUrl());
                     
                     if(MspUrlResolver.website.equalsIgnoreCase("amazon"))
                         resolvedUrl.append("?tag=aapcompare0f-21");
