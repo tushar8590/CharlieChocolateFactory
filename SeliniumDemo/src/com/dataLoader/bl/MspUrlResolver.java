@@ -45,11 +45,14 @@ public class MspUrlResolver {
         ResultSet rs = conn.executeQuery(SQLQueries.getUnresolvedUrls, null);
         
         System.out.println("Starting at "+new Timestamp(new Date().getTime()));
-        HtmlUnitDriver driver = new HtmlUnitDriver(BrowserVersion.CHROME);
+       
         List<String> params = new ArrayList<String>();
         String id = "";
+        
             while(rs.next()){
+            	HtmlUnitDriver driver = null;
                 try {
+                	  driver = new HtmlUnitDriver(BrowserVersion.FIREFOX_24);
                     String urlOld = rs.getString("url");
                     MspUrlResolver.website = rs.getString("website");
                     id = rs.getString("id");
@@ -119,7 +122,8 @@ public class MspUrlResolver {
                     continue;
                 }finally{
                     //conn.closeConnection();
-                    
+                	 driver.close(); 
+
                 }
                 
                 
@@ -128,8 +132,7 @@ public class MspUrlResolver {
             System.out.println("Ending at "+new Timestamp(new Date().getTime()));
             System.out.println("Data Inserted for "+counter+"  items");
         
-            driver.close(); driver.quit();
-
+           
     }
 
     private void deferUpdate(List<String> params, String id) {
