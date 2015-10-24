@@ -154,7 +154,8 @@ public class SelMultiThreadingDemoSpec {
 					String  header = "";
 		    		 String  key = "";
 		    		 String  value = "";
-		    		 for(int i = 1; i <50; i++)
+		    		 try {
+		    		 for(int i = 1; i <100; i++)
 		    		 {
 		    			 if(driver.findElements(By.xpath("//*[@id='msp_body']/div/div[4]/div/div[1]/div/table/tbody/tr["+i+"]/th")).size() > 0){
 		    				 header = driver.findElement(By.xpath("//*[@id='msp_body']/div/div[4]/div/div[1]/div/table/tbody/tr["+i+"]/th")).getText().toString();
@@ -168,6 +169,8 @@ public class SelMultiThreadingDemoSpec {
 		    			 }
 
 		    		 }
+		    		 } catch (Exception e) {            
+		                    }
            this.saveData(prdSpec.toString(), currentUrl);
 
 		    		 
