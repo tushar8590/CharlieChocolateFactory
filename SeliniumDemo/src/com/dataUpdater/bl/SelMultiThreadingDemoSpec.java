@@ -151,11 +151,14 @@ public class SelMultiThreadingDemoSpec {
 				
 				try {
 					driver = new HtmlUnitDriver(BrowserVersion.FIREFOX_24);
+					driver.get(currentUrl);
 					String  header = "";
 		    		 String  key = "";
 		    		 String  value = "";
-		    		 for(int i = 1; i <50; i++)
+		    		
+		    		 for(int i = 1; i <100; i++)
 		    		 {
+		    			 try{
 		    			 if(driver.findElements(By.xpath("//*[@id='msp_body']/div/div[4]/div/div[1]/div/table/tbody/tr["+i+"]/th")).size() > 0){
 		    				 header = driver.findElement(By.xpath("//*[@id='msp_body']/div/div[4]/div/div[1]/div/table/tbody/tr["+i+"]/th")).getText().toString();
 		    				 prdSpec.append("#"+header+";");
@@ -165,10 +168,11 @@ public class SelMultiThreadingDemoSpec {
 		    				 value = driver.findElement(By.xpath("//*[@id='msp_body']/div/div[4]/div/div[1]/div/table/tbody/tr["+i+"]/td[2]")).getText() ;
 		    				 prdSpec.append(key+"|");
 		    				 prdSpec.append(value+";");
-		    			 }
+		    			 }}catch(Exception e){continue;}
 
 		    		 }
-           this.saveData(prdSpec.toString(), currentUrl);
+          
+		    		 this.saveData(prdSpec.toString(), currentUrl);
 
 		    		 
 				} catch (Exception e) {
