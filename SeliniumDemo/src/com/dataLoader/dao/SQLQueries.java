@@ -94,6 +94,6 @@ public class SQLQueries {
 	   public static String udpateMspUResolvedUrlDeffered = "update msp_electronics url_mapped = 'X' where id = ?";
 	   
 	   // MSP related queries for spec udpate
-	   public static String updateMSPSpec = "update msp_product_url set product_spec = ?,temp_flag = 'X' where url_spec = ?"; // x stands for Data Found
-	   public static String updateSkipForNoSpecData = "UPDATE msp_product_url SET temp_flag = 'N' where url_spec = ?"; // N stands for data not found
+	   public static String updateMSPSpec = "update msp_product_url set product_spec = ?,temp_flag = 'X' where spec_url = ?"; // x stands for Data Found
+	   public static String updateSkipForNoSpecData = "UPDATE msp_product_url SET temp_flag = 'N' where spec_url = ?"; // N stands for data not found
 }
