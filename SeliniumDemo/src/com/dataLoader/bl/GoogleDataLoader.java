@@ -41,6 +41,10 @@ public class GoogleDataLoader  {
 	}
 
 	
+	public static void main(String ar[]){
+	    
+	}
+	
 	public void processList(String cat) {
 		
 		List<ProductMaster> items = getItemsList();
