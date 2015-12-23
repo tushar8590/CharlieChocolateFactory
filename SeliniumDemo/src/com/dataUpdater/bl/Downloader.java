@@ -27,7 +27,7 @@ public class Downloader {
 	//private static String userName = "aapcorjr_adbuser";
 	//private static String password = "adbuseraccess1@34";
 
-	private static String host = "jdbc:mysql://localhost:3306/aapcorjr_dbaapcompare9";
+	private static String host = "jdbc:mysql://localhost:3306/aapcorjr_aapdb9";
 	private static String userName = "root";
 	private static String password = "";
 

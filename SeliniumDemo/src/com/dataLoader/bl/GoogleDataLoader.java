@@ -42,10 +42,12 @@ public class GoogleDataLoader  {
 
 	
 	public static void main(String ar[]){
-	    
+	    GoogleDataLoader gdl = new GoogleDataLoader();
+	    gdl.populateList("Mens Footwear");// here the cat is from the table in database
+	    gdl.processList();
 	}
 	
-	public void processList(String cat) {
+	public void processList() {
 		
 		List<ProductMaster> items = getItemsList();
 
@@ -53,6 +55,7 @@ public class GoogleDataLoader  {
 		itemMap = new  HashMap<ProductMaster,VendorProductData>();
 		int i = 0;
 		conn = JDBCConnection.getInstance();
+		 WebDriver driver = new FirefoxDriver();
 		while (itr.hasNext()) {
 		try {
 			
@@ -62,18 +65,20 @@ public class GoogleDataLoader  {
 				i++;
 				//WebDriver driver = new FirefoxDriver();
 				  
-				  HtmlUnitDriver driver = new HtmlUnitDriver(BrowserVersion.FIREFOX_24);
-				  driver.setJavascriptEnabled(true);
+				 
+				
+				 //driver.setJavascriptEnabled(true);
 				 
 				
 				String search = pm.getProductTitle() + " + top online vendors";
 				System.out.println("browser "+ search);
 				driver.get("http://www.google.co.in");
-				driver.findElement(By.name("q")).sendKeys(search);
-				driver.findElement(By.cssSelector("#tsf > div.tsf-p > div.jsb > center > input[type='submit']:nth-child(1)")).click();
+				//driver.findElement(By.name("btnK")).sendKeys(search);
+				driver.findElement(By.xpath("//*[@id='tsf']/div[2]/div[3]/center/input[1]")).sendKeys(search);
+			//	driver.findElement(By.cssSelector("#tsf > div.tsf-p > div.jsb > center > input[type='submit']:nth-child(1)")).click();
 				
 				long end = System.currentTimeMillis() + 5000;
-				 WebElement myDynamicElement = (new WebDriverWait(driver, 15))
+				 WebElement myDynamicElement = (new WebDriverWait(driver, 65))
 			              .until(ExpectedConditions.presenceOfElementLocated(By.id("resultStats")));
 				 
 				 List<WebElement> findElements = driver.findElements(By.xpath("//*[@id='rso']//h3/a"));
@@ -95,13 +100,13 @@ public class GoogleDataLoader  {
 				        
 					}
 				   // if(flag)
-				    driver.close();
-				    driver.quit();
+				    
 				//if (i == 8) {
 				//	Thread.sleep(5000);
 					
 				//}
 			}
+		
 		 catch (Exception e) {
 			 e.printStackTrace();
 			 itr.remove();
@@ -109,6 +114,8 @@ public class GoogleDataLoader  {
 		 }
 		 
 		}
+		driver.close();
+        driver.quit();
 		//saveResults(itemMap);
 System.out.println("Data Inserted for  "+i+" products");
 	}
@@ -126,7 +133,7 @@ System.out.println("Data Inserted for  "+i+" products");
 		
 		String mastDataLoadQuery = SQLQueries.googleShoesData;
 		List<String> param = new ArrayList<String>();
-				param.add("Mens Footwear");
+				param.add(cat);
 				
 		ResultSet rs = conn.executeQuery(mastDataLoadQuery,param);
 		if(rs!=null){
