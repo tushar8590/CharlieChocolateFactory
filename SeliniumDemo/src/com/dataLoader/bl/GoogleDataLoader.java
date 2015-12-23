@@ -93,16 +93,29 @@ public class GoogleDataLoader  {
 				    for (WebElement webElement : findElements)
 				    {
 				    	String strURL=webElement.getAttribute("href");
-				        System.out.println(""+webElement.getAttribute("href"));
-				        String sql = "insert into shoes_url_temp (product_id,product_title,product_url) values(?,?,?)";
-				      
+				     
+				    	/**
+				    	 *  validations
+				    	 *  1. No / in the end of url
+				    	 *  2. Brand name in url
+				    	 */
+				    	System.out.println(strURL.lastIndexOf("/"));
+				    	System.out.println(strURL.length());
+				    	System.out.println(strURL.indexOf(pm.getProductBrand()) > 1);
+				    	if((strURL.lastIndexOf("/") != strURL.length())  && (strURL.contains(pm.getProductBrand())))
+				    	{
+				    	    System.out.println(""+webElement.getAttribute("href"));
+				    	}
+				    	
+				        //String sql = "insert into shoes_url_temp (product_id,product_title,product_url) values(?,?,?)";
+				      /*
 				        List<String> params = new ArrayList<String>();
 				        params.add(pm.getProductId());
 				       params.add(pm.getProductTitle());
 				        params.add(strURL);
 				        
 				       flag = conn.insertData(sql, params,true,pm.getProductId(),"google");
-				       System.out.println(flag);
+				       System.out.println(flag);*/
 				        
 					}
 				   // if(flag)
@@ -146,7 +159,7 @@ System.out.println("Data Inserted for  "+i+" products");
 			try {
 				while(rs.next()){
 						ProductMaster pm = new ProductMaster(rs.getString("product_id"),
-						rs.getString("product_title"));
+						rs.getString("product_title"),rs.getString("product_brand"));
 						productMasterList.add(pm);
 						
 					}

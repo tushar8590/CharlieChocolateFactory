@@ -42,7 +42,7 @@ public class SQLQueries {
 	
 	
 	
-	public static String googleShoesData ="SELECT product_id,product_title FROM product_details_snd_top_selling WHERE product_sub_cat_1 = ? AND google_map='T' AND product_brand IN('Reebok','Bata','Nike','Adidas','Liberty','Woodland','Valentino','Converse','Lancer','Lotto','RedTape','Puma','Paragon','Relaxo','Action','Fila','Coolers','Force 10','Sharon','Italiano','Lues Alberto','Amblin','Khadims','Genius','Cyke','G Sports','Montee Cairo','Globalite','Wood Style','Alberto Torresi','Aria','Catwalk','Sole Threads','Gliders','Timberland','United Colors of Benetton','Tiptopp','Sparx') ORDER BY product_title";
+	public static String googleShoesData ="SELECT product_id,product_title,product_brand FROM product_details_snd_top_selling WHERE product_sub_cat_1 = ? AND google_map='T' AND product_brand IN('Reebok','Bata','Nike','Adidas','Liberty','Woodland','Valentino','Converse','Lancer','Lotto','RedTape','Puma','Paragon','Relaxo','Action','Fila','Coolers','Force 10','Sharon','Italiano','Lues Alberto','Amblin','Khadims','Genius','Cyke','G Sports','Montee Cairo','Globalite','Wood Style','Alberto Torresi','Aria','Catwalk','Sole Threads','Gliders','Timberland','United Colors of Benetton','Tiptopp','Sparx') ORDER BY product_title";
 
 	 public static String updategoogleMaster = "update product_details_snd_top_selling set google_map = 'T' where product_id = ?";
 	 
