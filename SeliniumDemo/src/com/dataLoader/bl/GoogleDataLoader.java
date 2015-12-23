@@ -73,11 +73,17 @@ public class GoogleDataLoader  {
 				String search = pm.getProductTitle() + " + top online vendors";
 				System.out.println("browser "+ search);
 				driver.get("http://www.google.co.in");
-				//driver.findElement(By.name("btnK")).sendKeys(search);
-				driver.findElement(By.xpath("//*[@id='tsf']/div[2]/div[3]/center/input[1]")).sendKeys(search);
-			//	driver.findElement(By.cssSelector("#tsf > div.tsf-p > div.jsb > center > input[type='submit']:nth-child(1)")).click();
+				
+				
+				WebElement element = driver.findElement(By.name("q"));
+			    element.sendKeys(search); // send also a "\n"
+			    element.submit();
+			    
+			    
+				
 				
 				long end = System.currentTimeMillis() + 5000;
+				
 				 WebElement myDynamicElement = (new WebDriverWait(driver, 65))
 			              .until(ExpectedConditions.presenceOfElementLocated(By.id("resultStats")));
 				 
