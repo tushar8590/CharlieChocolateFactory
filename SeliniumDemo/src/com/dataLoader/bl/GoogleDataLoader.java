@@ -99,12 +99,18 @@ public class GoogleDataLoader  {
 				    	 *  1. No / in the end of url
 				    	 *  2. Brand name in url
 				    	 */
-				    	System.out.println(strURL.lastIndexOf("/"));
-				    	System.out.println(strURL.length());
-				    	System.out.println(strURL.indexOf(pm.getProductBrand()) > 1);
-				    	if((strURL.lastIndexOf("/") != strURL.length())  && (strURL.contains(pm.getProductBrand())))
+				    	
+				    	if((strURL.lastIndexOf("/") != strURL.length() -1)  && (strURL.toLowerCase().contains(pm.getProductBrand().toLowerCase())))
 				    	{
+				    	    String sql = "insert into shoes_url_temp (product_id,product_title,product_url) values(?,?,?)";
 				    	    System.out.println(""+webElement.getAttribute("href"));
+				    	    List<String> params = new ArrayList<String>();
+	                        params.add(pm.getProductId());
+	                       params.add(pm.getProductTitle());
+	                        params.add(strURL);
+	                        
+	                       flag = conn.insertData(sql, params,true,pm.getProductId(),"google");
+	                       System.out.println(flag);
 				    	}
 				    	
 				        //String sql = "insert into shoes_url_temp (product_id,product_title,product_url) values(?,?,?)";
