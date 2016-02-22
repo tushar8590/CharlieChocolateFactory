@@ -18,6 +18,27 @@ import com.dataLoader.dao.JDBCConnection;
 import com.dataLoader.dao.SQLQueries;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 
+
+/***
+ * this program collects the URL of all the products listed on the category landing paeg of msp
+ * 
+ * Do change the Xpath coz msp often chaneg it .. desin issue
+ * 
+ * The data goes insidet the table msp_product_url with a temp flag F
+ * After this some database queries needs be executed for building the psec url and models
+ * 
+ * UPDATE `msp_product_url` SET spec_url = REPLACE(CONCAT('http://www.mysmartprice.com/product/',SUBSTRING_INDEX(url,'/',-2),'-other#tab_spec'),'msf','mst') WHERE temp_flag = 'F';; 
+    UPDATE `msp_product_url` SET spec_url = REPLACE(CONCAT('http://www.mysmartprice.com/product/',SUBSTRING_INDEX(url,'/',-2),'-other#tab_spec'),'msp','mst') WHERE temp_flag = 'F';;
+    UPDATE `msp_product_url` SET spec_url = CONCAT('http://www.mysmartprice.com/product/',SUBSTRING_INDEX(url,'/',-2),'-other#tab_spec') WHERE temp_flag = 'F';; 
+
+    UPDATE `msp_product_url` SET spec_url = REPLACE(spec_url,'msf','mst') WHERE temp_flag = 'F';; 
+    UPDATE `msp_product_url` SET spec_url = REPLACE(spec_url,'msp','mst') WHERE temp_flag = 'F';;
+
+    UPDATE msp_product_flag  SET model =  SUBSTRING_INDEX(url,'/',-1) WHERE temp_flag = 'F';
+
+ * 
+ * */
+
 public class MSPUrlExtractor {
 
 	static{
@@ -28,29 +49,28 @@ public class MSPUrlExtractor {
 	static Map<String,List<String>> urlMap;
 	public static void main(String[] args) {
 		MSPUrlExtractor msp = new MSPUrlExtractor();
-		ExecutorService executor = Executors.newFixedThreadPool(3);
+		ExecutorService executor = Executors.newFixedThreadPool(10);
 		  List<Future<String>> list = new ArrayList<Future<String>>();
+		 
 		urlMap = new HashMap<String,List<String>>();
-		/*urlMap.put("mobiles", Arrays.asList("http://www.mysmartprice.com/mobile/pricelist/mobile-price-list-in-india.html#subcategory=mobile","http://www.mysmartprice.com/mobile/pricelist/pages/mobile-price-list-in-india-","76"));
+		 /*
+		urlMap.put("mobiles", Arrays.asList("http://www.mysmartprice.com/mobile/pricelist/mobile-price-list-in-india.html#subcategory=mobile","http://www.mysmartprice.com/mobile/pricelist/pages/mobile-price-list-in-india-","76"));
 		urlMap.put("tablets", Arrays.asList("http://www.mysmartprice.com/mobile/pricelist/tablet-price-list-in-india.html#subcategory=tablet&property=1200652-2267506","http://www.mysmartprice.com/mobile/pricelist/pages/tablet-price-list-in-india-","11"));
 		urlMap.put("smatwatches", Arrays.asList("http://www.mysmartprice.com/mobile/pricelist/smart-watches-price-list-in-india.html","http://www.mysmartprice.com/mobile/pricelist/pages/smart-watches-price-list-in-india-","4"));
 		urlMap.put("Micro SD card", Arrays.asList("http://www.mysmartprice.com/accessories/pricelist/memory-cards-price-list-in-india.html#subcategory=memory-cards&property=1200711-3837733","http://www.mysmartprice.com/accessories/pricelist/pages/memory-cards-price-list-in-india-","6"));
 		urlMap.put("Mobile Battery", Arrays.asList("http://www.mysmartprice.com/accessories/pricelist/batteries-price-list-in-india.html#subcategory=batteries&property=1200704-2267558","http://www.mysmartprice.com/accessories/pricelist/pages/batteries-price-list-in-india-","24"));
 		urlMap.put("Cables", Arrays.asList("http://www.mysmartprice.com/accessories/pricelist/chargers-price-list-in-india.html#subcategory=chargers&property=1200710-2267564","http://www.mysmartprice.com/accessories/pricelist/pages/chargers-price-list-in-india-","12"));
-		*/
-		/*urlMap.put("Cables", Arrays.asList("http://www.mysmartprice.com/accessories/pricelist/chargers-price-list-in-india.html#subcategory=chargers&property=1200710-2267564","http://www.mysmartprice.com/accessories/pricelist/pages/chargers-price-list-in-india-","12"));
 		urlMap.put("Cables", Arrays.asList("http://www.mysmartprice.com/accessories/pricelist/chargers-price-list-in-india.html#subcategory=chargers&property=1200710-2267564","http://www.mysmartprice.com/accessories/pricelist/pages/chargers-price-list-in-india-","12"));
 		urlMap.put("Cables", Arrays.asList("http://www.mysmartprice.com/accessories/pricelist/chargers-price-list-in-india.html#subcategory=chargers&property=1200710-2267564","http://www.mysmartprice.com/accessories/pricelist/pages/chargers-price-list-in-india-","12"));
-		*/
-		
-		// urlMap.put("Mobiles", Arrays.asList("http://www.mysmartprice.com/mobile/pricelist/mobile-price-list-in-india.html","http://www.mysmartprice.com/mobile/pricelist/pages/mobile-price-list-in-india-","77"));
-		// urlMap.put("Tablets", Arrays.asList("http://www.mysmartprice.com/mobile/pricelist/tablet-price-list-in-india.html","http://www.mysmartprice.com/mobile/pricelist/pages/tablet-price-list-in-india-","11"));
+		urlMap.put("Cables", Arrays.asList("http://www.mysmartprice.com/accessories/pricelist/chargers-price-list-in-india.html#subcategory=chargers&property=1200710-2267564","http://www.mysmartprice.com/accessories/pricelist/pages/chargers-price-list-in-india-","12"));
+		 urlMap.put("Mobiles", Arrays.asList("http://www.mysmartprice.com/mobile/pricelist/mobile-price-list-in-india.html","http://www.mysmartprice.com/mobile/pricelist/pages/mobile-price-list-in-india-","77"));
+		 urlMap.put("Tablets", Arrays.asList("http://www.mysmartprice.com/mobile/pricelist/tablet-price-list-in-india.html","http://www.mysmartprice.com/mobile/pricelist/pages/tablet-price-list-in-india-","11"));
 		 urlMap.put("Landline Phones", Arrays.asList("http://www.mysmartprice.com/accessories/pricelist/landline-phones-price-list-in-india.html","http://www.mysmartprice.com/accessories/pricelist/pages/landline-phones-price-list-in-india-","7"));
-		// urlMap.put("Smart Watches", Arrays.asList("http://www.mysmartprice.com/mobile/pricelist/smart-watches-price-list-in-india.html","http://www.mysmartprice.com/mobile/pricelist/pages/smart-watches-price-list-in-india-","4"));
-		// urlMap.put("MicroSD Memory Cards", Arrays.asList("http://www.mysmartprice.com/accessories/pricelist/memory-cards-price-list-in-india.html","http://www.mysmartprice.com/accessories/pricelist/pages/memory-cards-price-list-in-india-","6"));
-		// urlMap.put("Mobile Battery", Arrays.asList("http://www.mysmartprice.com/accessories/pricelist/batteries-price-list-in-india.html","http://www.mysmartprice.com/accessories/pricelist/pages/batteries-price-list-in-india-","28"));
+		 urlMap.put("Smart Watches", Arrays.asList("http://www.mysmartprice.com/mobile/pricelist/smart-watches-price-list-in-india.html","http://www.mysmartprice.com/mobile/pricelist/pages/smart-watches-price-list-in-india-","4"));
+		 urlMap.put("MicroSD Memory Cards", Arrays.asList("http://www.mysmartprice.com/accessories/pricelist/memory-cards-price-list-in-india.html","http://www.mysmartprice.com/accessories/pricelist/pages/memory-cards-price-list-in-india-","6"));
+		 urlMap.put("Mobile Battery", Arrays.asList("http://www.mysmartprice.com/accessories/pricelist/batteries-price-list-in-india.html","http://www.mysmartprice.com/accessories/pricelist/pages/batteries-price-list-in-india-","28"));
 		 urlMap.put("Mobile Chargers", Arrays.asList("http://www.mysmartprice.com/accessories/pricelist/chargers-price-list-in-india.html","http://www.mysmartprice.com/accessories/pricelist/pages/chargers-price-list-in-india-","12"));
-		// urlMap.put("Cables", Arrays.asList("http://www.mysmartprice.com/accessories/pricelist/cables-price-list-in-india.html","http://www.mysmartprice.com/accessories/pricelist/pages/cables-price-list-in-india-","2"));
+		 urlMap.put("Cables", Arrays.asList("http://www.mysmartprice.com/accessories/pricelist/cables-price-list-in-india.html","http://www.mysmartprice.com/accessories/pricelist/pages/cables-price-list-in-india-","2"));
 		 urlMap.put("Power Banks", Arrays.asList("http://www.mysmartprice.com/accessories/pricelist/power-banks-price-list-in-india.html ","http://www.mysmartprice.com/accessories/pricelist/pages/power-banks-price-list-in-india- ","38"));
 		 urlMap.put("Smart Bands", Arrays.asList("http://www.mysmartprice.com/mobile/pricelist/fitness-tracker-price-list-in-india.html","http://www.mysmartprice.com/mobile/pricelist/pages/fitness-tracker-price-list-in-india-","2"));
 		 urlMap.put("Wireless Speakers", Arrays.asList("http://www.mysmartprice.com/accessories/pricelist/wireless-speakers-price-list-in-india.html","http://www.mysmartprice.com/accessories/pricelist/pages/wireless-speakers-price-list-in-india-","19"));
@@ -61,7 +81,6 @@ public class MSPUrlExtractor {
 		 urlMap.put("Car Kits", Arrays.asList("http://www.mysmartprice.com/accessories/pricelist/car-kits-price-list-in-india.html","http://www.mysmartprice.com/accessories/pricelist/pages/car-kits-price-list-in-india-","3"));
 		 urlMap.put("Car Cradles & Mounts", Arrays.asList("http://www.mysmartprice.com/accessories/pricelist/car-cradles-price-list-in-india.html","http://www.mysmartprice.com/accessories/pricelist/pages/car-cradles-price-list-in-india- ","7"));
 		 urlMap.put("GPS Navigation Devices", Arrays.asList("http://www.mysmartprice.com/accessories/pricelist/gps-navigation-devices-price-list-in-india.html","http://www.mysmartprice.com/accessories/pricelist/pages/gps-navigation-devices-price-list-in-india-","3"));
-		 urlMap.put("All Laptops", Arrays.asList("http://mysmartprice.com/computer/pricelist/laptops-price-list-in-india.html ","http://mysmartprice.com/computer/pricelist/pages/laptops-price-list-in-india-","27"));
 		 urlMap.put("Pen Drives Price", Arrays.asList("http://mysmartprice.com/computer/pricelist/computer-pendrive-price-list-in-india.html","http://mysmartprice.com/computer/pricelist/pages/computer-pendrive-price-list-in-india-","16"));
 		 urlMap.put("External Hard Disks Price", Arrays.asList("http://mysmartprice.com/computer/pricelist/computer-external-hard-disks-price-list-in-india.html ","http://mysmartprice.com/computer/pricelist/pages/computer-external-hard-disks-price-list-in-india-","6"));
 		 urlMap.put("External DVD Writers", Arrays.asList("http://mysmartprice.com/computer/pricelist/computer-external-dvd-writer-price-list-in-india.html","http://mysmartprice.com/computer/pricelist/pages/computer-external-dvd-writer-price-list-in-india-","2"));
@@ -199,7 +218,39 @@ public class MSPUrlExtractor {
 		 urlMap.put("Hand Tools", Arrays.asList("http://mysmartprice.com/appliance/pricelist/hand-tools-price-list-in-india.html","http://mysmartprice.com/appliance/pricelist/pages/hand-tools-price-list-in-india-","3"));
 		 urlMap.put("Measuring Tools", Arrays.asList("http://mysmartprice.com/appliance/pricelist/measuring-tools-price-list-in-india.html ","http://mysmartprice.com/appliance/pricelist/pages/measuring-tools-price-list-in-india- ","2"));
 		 urlMap.put("Tool Accessories", Arrays.asList("http://mysmartprice.com/appliance/pricelist/tool-accessories-price-list-in-india.html","http://mysmartprice.com/appliance/pricelist/pages/tool-accessories-price-list-in-india-","2"));
+	      */
+		
+		
+		// From Here we haev to run again
+		
+		/* urlMap.put("All Laptops", Arrays.asList("http://mysmartprice.com/computer/pricelist/laptops-price-list-in-india.html ","http://mysmartprice.com/computer/pricelist/pages/laptops-price-list-in-india-","27"));
+		 urlMap.put("Micro SD card", Arrays.asList("http://www.mysmartprice.com/accessories/pricelist/memory-cards-price-list-in-india.html#subcategory=memory-cards&property=1200711-3837733","http://www.mysmartprice.com/accessories/pricelist/pages/memory-cards-price-list-in-india-","6"));
+		 urlMap.put("MicroSD Memory Cards", Arrays.asList("http://mysmartprice.com/accessories/pricelist/memory-cards-price-list-in-india.html","http://mysmartprice.com/accessories/pricelist/pages/memory-cards-price-list-in-india-","6"));
+		 urlMap.put("Headphones", Arrays.asList("http://www.mysmartprice.com/electronics/pricelist/headphones-price-list-in-india.html","http://www.mysmartprice.com/electronics/pricelist/pages/headphones-price-list-in-india-","19"));
+		 urlMap.put("Single Function Printers", Arrays.asList("http://mysmartprice.com/computer/pricelist/computer-printer-price-list-in-india.html ","http://mysmartprice.com/computer/pricelist/pages/computer-printer-price-list-in-india-","5"));
+		 urlMap.put("Wired Headsets", Arrays.asList("http://www.mysmartprice.com/electronics/pricelist/headsets-price-list-in-india.html","http://www.mysmartprice.com/electronics/pricelist/pages/headsets-price-list-in-india-","28"));
+		 urlMap.put("Car Cradles & Mounts", Arrays.asList("http://www.mysmartprice.com/accessories/pricelist/car-cradles-price-list-in-india.html","http://www.mysmartprice.com/accessories/pricelist/pages/car-cradles-price-list-in-india- ","7"));
+		 urlMap.put("Pen Drives Price", Arrays.asList("http://mysmartprice.com/computer/pricelist/computer-pendrive-price-list-in-india.html","http://mysmartprice.com/computer/pricelist/pages/computer-pendrive-price-list-in-india-","16"));
+		 urlMap.put("External Hard Disks Price", Arrays.asList("http://mysmartprice.com/computer/pricelist/computer-external-hard-disks-price-list-in-india.html ","http://mysmartprice.com/computer/pricelist/pages/computer-external-hard-disks-price-list-in-india-","6"));
+		 urlMap.put("MicroSD Memory Cards", Arrays.asList("http://www.mysmartprice.com/accessories/pricelist/memory-cards-price-list-in-india.html","http://www.mysmartprice.com/accessories/pricelist/pages/memory-cards-price-list-in-india-","6"));*/
+		 /*urlMap.put("Computer Headsets", Arrays.asList("http://mysmartprice.com/electronics/pricelist/headsets-price-list-in-india.html","http://mysmartprice.com/electronics/pricelist/pages/headsets-price-list-in-india-","28"));
+		 urlMap.put("Speakers", Arrays.asList("http://mysmartprice.com/computer/pricelist/computer-speaker-price-list-in-india.html ","http://mysmartprice.com/computer/pricelist/pages/computer-speaker-price-list-in-india-","25"));
+		 urlMap.put("Microsoft Windows", Arrays.asList("http://mysmartprice.com/computer/pricelist/computer-operating-system-price-list-in-india.html","http://mysmartprice.com/computer/pricelist/pages/computer-operating-system-price-list-in-india-","2"));
+		
+		 urlMap.put("Digital Cameras", Arrays.asList("http://mysmartprice.com/camera/pricelist/digital-camera-price-list-in-india.html ","http://mysmartprice.com/camera/pricelist/pages/digital-camera-price-list-in-india- ","8"));
+		 urlMap.put("All LED & LCD TVs", Arrays.asList("http://mysmartprice.com/electronics/pricelist/tv-price-list-in-india.html","http://mysmartprice.com/electronics/pricelist/pages/tv-price-list-in-india-","22"));
+		 urlMap.put("Apple iPod", Arrays.asList("http://mysmartprice.com/electronics/pricelist/apple-ipod-mp3-price-list-in-india.html","http://mysmartprice.com/electronics/pricelist/pages/apple-ipod-mp3-price-list-in-india-","3"));
+		 urlMap.put("Home Theaters", Arrays.asList("http://mysmartprice.com/electronics/pricelist/home-theaters-price-list-in-india.html","http://mysmartprice.com/electronics/pricelist/pages/home-theaters-price-list-in-india-","5"));         
+		 urlMap.put("Washing Machines", Arrays.asList("http://mysmartprice.com/appliance/pricelist/washing-machines-price-list-in-india.html","http://mysmartprice.com/appliance/pricelist/pages/washing-machines-price-list-in-india-","12"));
+		 urlMap.put("Refrigerators", Arrays.asList("http://mysmartprice.com/appliance/pricelist/refrigerators-price-list-in-india.html","http://mysmartprice.com/appliance/pricelist/pages/refrigerators-price-list-in-india-","13"));
+*/
+		
+	//	urlMap.put("Apple iPod", Arrays.asList("http://mysmartprice.com/electronics/pricelist/apple-ipod-mp3-price-list-in-india.html","http://mysmartprice.com/electronics/pricelist/pages/apple-ipod-mp3-price-list-in-india-","3"));
+		//urlMap.put("Home Theaters", Arrays.asList("http://mysmartprice.com/electronics/pricelist/home-theaters-price-list-in-india.html","http://mysmartprice.com/electronics/pricelist/pages/home-theaters-price-list-in-india-","5"));
+		urlMap.put("Washing Machines", Arrays.asList("http://mysmartprice.com/appliance/pricelist/washing-machines-price-list-in-india.html","http://mysmartprice.com/appliance/pricelist/pages/washing-machines-price-list-in-india-","12"));
 
+		
+		
 		urlMap.forEach((k,v)->{
 			Callable<String> callable = msp.new  DataExtractor(v.get(0),v.get(1),v.get(2),k);
 			Future<String> future = executor.submit(callable);
@@ -237,25 +288,18 @@ public class MSPUrlExtractor {
 	   // get the base url data  
 	        try{
 	        driver.get(baseUrl);
-	        for(int i = 4 ;i<=51;i++){
-	        	if(section.equals("tablets"))
-	        		productUrl = driver.findElement(By.xpath("//*[@id='msp_body']/div/div[1]/div[5]/div[1]/div[4]/div["+i+"]/div/a")).getAttribute("href");
-	        	else
-	                productUrl = driver.findElement(By.xpath("//*[@id='msp_body']/div/div[1]/div[4]/div[1]/div[3]/div["+i+"]/div/a")).getAttribute("href");
+	        for(int i = 1 ;i<=48;i++){
+	        	productUrl = driver.findElement(By.xpath("/html/body/div[4]/div[3]/div[1]/div[5]/div[2]/div[1]/div["+i+"]/div[2]/a")).getAttribute("href");
+	        	                                      //    /html/body/div[4]/div[3]/div[1]/div[5]/div[2]/div[1]/div[1]/div[2]/a
+	        	                                        //  /html/body/div[4]/div[3]/div[1]/div[3]/div[2]/div[1]/div[1]/div[2]/a
 	            this.saveData(productUrl, section);
 	        }
-	        
-	        
 	    // for the otherUrls    
 	  for(int j = 2;j<=limit;j++){
-		 
 		  driver.get(otherUrls+j+".html");
-	        for(int i = 4 ;i<=51;i++){
-	        	if(section.equals("tablets"))
-	        		productUrl = driver.findElement(By.xpath("//*[@id='msp_body']/div/div[1]/div[4]/div[1]/div[4]/div["+i+"]/div/a")).getAttribute("href");
-	        	else
-	                productUrl = driver.findElement(By.xpath("//*[@id='msp_body']/div/div[1]/div[4]/div[1]/div[3]/div["+i+"]/div/a")).getAttribute("href");
-	            this.saveData(productUrl, section);
+	        for(int i = 1 ;i<=48;i++){
+	              productUrl = driver.findElement(By.xpath("/html/body/div[4]/div[3]/div[1]/div[5]/div[2]/div[1]/div["+i+"]/div[2]/a")).getAttribute("href");
+	              this.saveData(productUrl, section);
 	        }
 	  }
 	
@@ -271,8 +315,11 @@ public class MSPUrlExtractor {
 	
 	private void saveData(String url,String section){
 		 query = SQLQueries.insertMspProductUrl;
+		 params.add("elecaap");
+		 params.add("model");
 		 params.add(url);
 		 params.add(section);
+		 params.add("F");
 		 conn.upsertData(query, params); 
 		 params.clear();
 	   // System.out.println(url+" "+ section);
