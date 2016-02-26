@@ -7,7 +7,7 @@ import java.util.List;
 public class JDBCConnection {
 
 	
-	private String host = "jdbc:mysql://localhost:3306/aapcorjr_aapdb9";
+	private String host = "jdbc:mysql://localhost:3306/aapcompare_test";
 	//private String host = "jdbc:mysql://103.21.58.156:3306/aapcorjr_dbaapcompare9";
 	//private String userName = "aapcorjr_adbuser";
 	private String userName =	"root";
@@ -18,7 +18,7 @@ public class JDBCConnection {
 	private static JDBCConnection conn = null;
 	private ResultSet rs;
 	
-	private JDBCConnection() {
+	public JDBCConnection() {
 		try{
 			
 			// Load the Driver class. 
@@ -66,6 +66,19 @@ public class JDBCConnection {
 			}
 		
 			rs = pstmt.executeQuery();
+			
+		} catch (SQLException e) {
+	
+			e.printStackTrace();
+		}
+		return rs;
+	}
+	
+	public ResultSet executeQuery(String query){
+		try {
+			Statement stmt = con.createStatement();
+		
+			rs = stmt.executeQuery(query);
 			
 		} catch (SQLException e) {
 	
