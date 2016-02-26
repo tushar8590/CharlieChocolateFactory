@@ -7,18 +7,18 @@ import java.util.List;
 public class JDBCConnection {
 
 	
-	//private String host = "jdbc:mysql://localhost:3306/aapcorjr_aapdb9";
-	private String host = "jdbc:mysql://103.21.58.156:3306/aapcorjr_dbaapcompare9";
-	private String userName = "aapcorjr_adbuser";
-	//private String userName =	"root";
-	private String password = "adbuseraccess1@34";
-	//private String password = "";
+	private String host = "jdbc:mysql://localhost:3306/aapcompare_test";
+	//private String host = "jdbc:mysql://103.21.58.156:3306/aapcorjr_dbaapcompare9";
+	//private String userName = "aapcorjr_adbuser";
+	private String userName =	"root";
+	//private String password = "adbuseraccess1@34";
+	private String password = "";
 	private static Connection con;
 	
 	private static JDBCConnection conn = null;
 	private ResultSet rs;
 	
-	private JDBCConnection() {
+	public JDBCConnection() {
 		try{
 			
 			// Load the Driver class. 
@@ -37,7 +37,7 @@ public class JDBCConnection {
 
 	public static JDBCConnection getInstance(){
 		 
-		/*try {
+		try {
 			if(conn == null || con.isClosed()){
 				synchronized(JDBCConnection.class){
 					if(conn == null || con.isClosed()){
@@ -48,9 +48,9 @@ public class JDBCConnection {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return conn;*/
+		return conn;
 		
-		return new JDBCConnection();
+		//return new JDBCConnection();
 	}
 	
 	public ResultSet executeQuery(String query,List<String> params){
@@ -74,6 +74,19 @@ public class JDBCConnection {
 		return rs;
 	}
 	
+	public ResultSet executeQuery(String query){
+		try {
+			Statement stmt = con.createStatement();
+		
+			rs = stmt.executeQuery(query);
+			
+		} catch (SQLException e) {
+	
+			e.printStackTrace();
+		}
+		return rs;
+	}
+	
 	public boolean insertData(String query,List<String> params,boolean isUpdate,String parentProductId,String vendor){
 		PreparedStatement pstmt  = null;
 		PreparedStatement pstmt1 = null;
@@ -81,7 +94,6 @@ public class JDBCConnection {
 		boolean flag = false;
 		
 		try {
-		  
 			pstmt = con.prepareStatement(query);
 		
 		
@@ -142,9 +154,7 @@ public class JDBCConnection {
 		boolean flag = false;
 		
 		try {
-		    
-		//conn = getInstance();
-		 // con.setAutoCommit(false);
+		conn = getInstance();
 			pstmt = con.prepareStatement(query);
 			if(params!=null){
 			int i = 1;
@@ -157,13 +167,11 @@ public class JDBCConnection {
 			if(pstmt.executeUpdate()>0){
 				flag = true;
 			}
-			//conn.commit();
+			
 		} catch (SQLException e) {
 			flag = false;
 			e.printStackTrace();
-			//con.rollback();
 		}finally{
-		   // conn.closeConnection();
 			/*try {
 				//pstmt.close();
 				//pstmt1.close();
@@ -171,7 +179,6 @@ public class JDBCConnection {
 				e.printStackTrace();
 			}*/
 		}
-		
 		return flag;
 	}
 	
@@ -184,9 +191,5 @@ public class JDBCConnection {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-	
-	public void commit() throws SQLException{
-	    con.commit();
 	}
 }

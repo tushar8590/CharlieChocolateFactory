@@ -42,7 +42,7 @@ public class SQLQueries {
 	
 	
 	
-	public static String googleShoesData ="SELECT product_id,product_title,product_brand FROM product_details_snd_top_selling WHERE product_sub_cat_1 = ? AND google_map='T' AND product_brand IN('Reebok','Bata','Nike','Adidas','Liberty','Woodland','Valentino','Converse','Lancer','Lotto','RedTape','Puma','Paragon','Relaxo','Action','Fila','Coolers','Force 10','Sharon','Italiano','Lues Alberto','Amblin','Khadims','Genius','Cyke','G Sports','Montee Cairo','Globalite','Wood Style','Alberto Torresi','Aria','Catwalk','Sole Threads','Gliders','Timberland','United Colors of Benetton','Tiptopp','Sparx') ORDER BY product_title";
+	public static String googleShoesData ="SELECT product_id,product_title FROM product_details_snd_top_selling WHERE product_sub_cat_1 = ? AND google_map='T' AND product_brand IN('Reebok','Bata','Nike','Adidas','Liberty','Woodland','Valentino','Converse','Lancer','Lotto','RedTape','Puma','Paragon','Relaxo','Action','Fila','Coolers','Force 10','Sharon','Italiano','Lues Alberto','Amblin','Khadims','Genius','Cyke','G Sports','Montee Cairo','Globalite','Wood Style','Alberto Torresi','Aria','Catwalk','Sole Threads','Gliders','Timberland','United Colors of Benetton','Tiptopp','Sparx') ORDER BY product_title";
 
 	 public static String updategoogleMaster = "update product_details_snd_top_selling set google_map = 'T' where product_id = ?";
 	 
@@ -81,7 +81,7 @@ public class SQLQueries {
 	 // MSP related queries
 	   // Tushar 
 	   // 1sth October 2015
-	   public static String  insertMspProductUrl = "insert into msp_product_url(product_id,model,url,section,temp_flag) values(?,?,?,?,?)  ";
+	   public static String  insertMspProductUrl = "insert into msp_product_url(product_id,url,section,status) values(concat(LAST_INSERT_ID() + 1),?,?,?)";
 	   public static String insertElectronicData = "insert into sp_electronics(model,price,url,image_url,section,mapped_flag) values()";
 	   public static String getMspUrls  = "SELECT * FROM `msp_product_url` -- where temp_flag = 'N' "; 
 	   public static String insertMspProductData = "insert into msp_electronics(product_id,section,model,url,price,image,cod,delivery_time,rating,emi_avaliable,temp_flag) values (?,?,?,?,?,?,?,?,?,?,'X')";
@@ -96,4 +96,7 @@ public class SQLQueries {
 	   // MSP related queries for spec udpate
 	   public static String updateMSPSpec = "update msp_product_url set product_spec = ?,temp_flag = 'X' where spec_url = ?"; // x stands for Data Found
 	   public static String updateSkipForNoSpecData = "UPDATE msp_product_url SET temp_flag = 'N' where spec_url = ?"; // N stands for data not found
+	   public static String fetchMainCategoryMap= "select * from category_main_url";
+	   public static String fetchAllUrl= "select url from msp_product_url";
+
 }
