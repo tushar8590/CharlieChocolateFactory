@@ -26,6 +26,15 @@ import com.dataLoader.dao.SQLQueries;
 import com.dataUpdater.bl.MSPCatDataExtractor.DataExtractor;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 
+
+
+/**
+ * 
+ * Getting the data from msp_product_url whose temp_flag = 'F'
+ * after inserting the SPec data it makes the  temp_flag = 'X' - for data found and Y for data not found
+ * @author jn1831
+ *
+ */
 public class SelMultiThreadingDemoSpec {
 
 	static{
@@ -60,7 +69,7 @@ public class SelMultiThreadingDemoSpec {
 				urlMap = new HashMap<>();
 				while (rs.next()) {
 					String getProductUrl = "select * from msp_product_url where section = '"
-							+ rs.getString("section") + "' and temp_flag = 'F'";
+							+ rs.getString("section") + "' and temp_flag = 'F' LIMIT 300";
 					ResultSet rsProductUrl = conn.executeQuery(getProductUrl,
 							null);
 					urlList = new ArrayList<>();
@@ -72,6 +81,9 @@ public class SelMultiThreadingDemoSpec {
 				}
 				mainMap.put(rs1.getString("menu_level1"), urlMap);
 			}
+			System.out.println(urlList.size());
+			System.out.println(urlMap.size());
+			System.out.println(mainMap.size());
 
 			/*
 			 * urlMap.forEach((k,v) -> { idBase = "AC" + count; DataExtractor de
@@ -94,7 +106,7 @@ public class SelMultiThreadingDemoSpec {
 		SelMultiThreadingDemoSpec mspSpecExtractor = new SelMultiThreadingDemoSpec();
 		mspSpecExtractor.getUrls();
 		HtmlUnitDriver driver = new HtmlUnitDriver(BrowserVersion.FIREFOX_24);
-		ExecutorService executor = Executors.newFixedThreadPool(6);
+		ExecutorService executor = Executors.newFixedThreadPool(5);
 		List<Future<String>> list = new ArrayList<Future<String>>();
 
 		for(Map.Entry<String,Map<String,List<String>>> topLevelMenuMapEntry:mainMap.entrySet()){
@@ -109,7 +121,7 @@ public class SelMultiThreadingDemoSpec {
 			
 		
 		}
-		
+		executor.shutdown();
 		System.out.println("Shutting down ececutor");
 	}
 	
@@ -144,38 +156,58 @@ public class SelMultiThreadingDemoSpec {
 			Iterator<String> itr = url.iterator();
 			String currentUrl = "";
 	    	 StringBuilder prdSpec = new StringBuilder();
-
+	    //	 System.out.println("Calling");
 			while (itr.hasNext()) {
-				
 				currentUrl = itr.next();
-				
+                System.out.println(currentUrl);
+
 				try {
 					driver = new HtmlUnitDriver(BrowserVersion.FIREFOX_24);
 					driver.get(currentUrl);
+					
 					String  header = "";
 		    		 String  key = "";
 		    		 String  value = "";
 
-		    		 try {
+		    		 
 
-		    		
-		    		 for(int i = 1; i <100; i++)
+		    		     String combinedVal[] =null; 
+		    		 for(int i = 1; i <70; i++)
 		    		 {
-		    			 try{
-		    			 if(driver.findElements(By.xpath("//*[@id='msp_body']/div/div[4]/div/div[1]/div/table/tbody/tr["+i+"]/th")).size() > 0){
-		    				 header = driver.findElement(By.xpath("//*[@id='msp_body']/div/div[4]/div/div[1]/div/table/tbody/tr["+i+"]/th")).getText().toString();
+		    			 /*try{
+		    			 if(driver.findElements(By.xpath("//*[@id='msp_body']/div/div[5]/div/div[1]/div/table/tbody/tr["+i+"]/th")).size() > 0){
+		    				 header = driver.findElement(By.xpath("//*[@id='msp_body']/div/div[5]/div/div[1]/div/table/tbody/tr["+i+"]/th")).getText().toString();
+		    				//                                      
 		    				 prdSpec.append("#"+header+";");
 
 		    			 }else{
-		    				 key=  driver.findElement(By.xpath("//*[@id='msp_body']/div/div[4]/div/div[1]/div/table/tbody/tr["+i+"]/td[1]")).getText() ;
-		    				 value = driver.findElement(By.xpath("//*[@id='msp_body']/div/div[4]/div/div[1]/div/table/tbody/tr["+i+"]/td[2]")).getText() ;
+		    				 key=  driver.findElement(By.xpath("//*[@id='msp_body']/div/div[5]/div/div[1]/div/table/tbody/tr["+i+"]/td[1]")).getText() ;
+		    				 value = driver.findElement(By.xpath("//*[@id='msp_body']/div/div[5]/div/div[1]/div/table/tbody/tr["+i+"]/td[2]")).getText() ;
+		    				                                   
 		    				 prdSpec.append(key+"|");
 		    				 prdSpec.append(value+";");
-		    			 }}catch(Exception e){continue;}
+		    			 }}catch(Exception e){continue;}*/
+		    		     
+
+                         try{
+                             
+                             String divVal = driver.findElement(By.xpath("/html/body/div[4]/div[3]/div["+i+"]")).getText();
+                             if(divVal.split("\n").length > 1){ // its key - value 
+                                  combinedVal = driver.findElement(By.xpath("/html/body/div[4]/div[3]/div["+i+"]")).getText().split("\n");
+                                  key = combinedVal[0];
+                                  value = combinedVal[1];
+                                  prdSpec.append(key+"|");
+                                  prdSpec.append(value+";");
+                             }else{
+                                 header = driver.findElement(By.xpath("/html/body/div[4]/div[3]/div["+i+"]")).getText();
+                                 prdSpec.append("#"+header+";");
+                             }
 
 		    		 }
 
-		    		 } catch (Exception e) {            
+		    		  catch (Exception e) {
+		    		      continue;
+		    		  }
 		                    }
            this.saveData(prdSpec.toString(), currentUrl);
  	
@@ -200,16 +232,19 @@ public class SelMultiThreadingDemoSpec {
 		}
 		private void saveData(String prdSpec,String currentUrl) {
 			query = SQLQueries.updateMSPSpec;
+			if(prdSpec == null)
+			    prdSpec = " ";
 			params.add(prdSpec);
 			params.add(currentUrl);
 			 conn.upsertData(query, params);
 			params.clear();
-			// System.out.println(url+" "+ section);
+			// System.out.println(url);
 		}
 		
 		private void saveSkipForNoData(String currentUrl){
 			System.out.println("No Data");
 			query = SQLQueries.updateSkipForNoSpecData; 
+			params.clear();
 			params.add(currentUrl);
 			 conn.upsertData(query, params);
 				params.clear();

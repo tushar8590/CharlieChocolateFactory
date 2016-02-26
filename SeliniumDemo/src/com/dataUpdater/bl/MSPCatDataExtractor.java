@@ -107,7 +107,7 @@ public class MSPCatDataExtractor {
 				urlMap = new HashMap<>();
 				while (rs.next()) {
 					String getProductUrl = "select * from msp_product_url where section = '"
-							+ rs.getString("section") + "' and temp_flag = 'F'";
+							+ rs.getString("section") + "' and temp_flag = 'F' LIMIT 100";
 					ResultSet rsProductUrl = conn.executeQuery(getProductUrl,
 							null);
 					urlList = new ArrayList<>();
