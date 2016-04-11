@@ -23,14 +23,15 @@ public class CssTester {
        */
 	
         
-        String url = "http://www.mysmartprice.com/product/accessories/strontium-nitro-32gb-class-10-microsd-hc-xc-memory-card-mst59103-other#tab_spec";
+        String url = "http://www.mysmartprice.com/mobile/apple-iphone-6s-plus-msp7116";
         driver.get(url);
                                                         
-        String  productUrl = driver.findElement(By.xpath("/html/body/div[4]/div[3]")).getText();
+        String  productUrl = driver.findElement(By.xpath("//*[@id='pricetable']/div[3]/div[2]/div[5]/div[1]/div[1]")).getText();
 
         
-        System.out.println(productUrl);
-        
+        System.out.println(productUrl.replaceAll("[^0-9]", ""));
+      
+
        
         driver.close();
     }

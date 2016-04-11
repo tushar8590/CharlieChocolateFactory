@@ -89,28 +89,28 @@ public class MspUrlResolver {
 
 		try {
 			while (rs1.next()) {
-				String subMenuQuery = "SELECT menu_level2 section FROM msp_electronics WHERE  menu_level1 = '"
+				String subMenuQuery = "SELECT distinct menu_level2 ,section FROM msp_electronics WHERE  menu_level1 = '"
 						+ rs1.getString("menu_level1") + "' and url_mapped = 'F' ORDER BY menu_level2";
 				// get the prodct corr to each section
 				ResultSet rs = conn.executeQuery(subMenuQuery, null);
 				urlMap = new HashMap<>();
 				while (rs.next()) {
 					String getProductUrl = "select * from msp_electronics where menu_level2 = '"
-							+ rs.getString("menu_level2") + "' and url_mapped = 'F'";
+							+ rs.getString(1) + "' and url_mapped = 'F' LIMIT 500";
 					ResultSet rsProductUrl = conn.executeQuery(getProductUrl,
 							null);
 					urlList = new ArrayList<>();
 					while (rsProductUrl.next()) {
-						urlList.add(new OldUrlMap(rsProductUrl.getString("id"),rsProductUrl.getString("website") , rsProductUrl.getString("url")));
+						urlList.add(new OldUrlMap(rsProductUrl.getString("product_id"),rsProductUrl.getString("website") , rsProductUrl.getString("url")));
 					}
-					urlMap.put(rs.getString("menu_level2"), urlList);
+					urlMap.put(rs.getString(1), urlList);
 				}
 				mainMap.put(rs1.getString("menu_level1"), urlMap);
 			}
 			System.out.println("Ending  at "+new Timestamp(new Date().getTime()));
 		} catch (Exception e) {
 		    System.out.println("Error at "+new Timestamp(new Date().getTime()));
-			e.getMessage();
+			e.printStackTrace();
 		} finally {
 
 			// conn.closeConnection();
@@ -244,7 +244,7 @@ public class MspUrlResolver {
 
 		    		 
 				} catch (Exception e) {
-					e.getMessage();
+					e.printStackTrace();
 					String updateQUery = SQLQueries.udpateMspUResolvedUrlDeffered;
 					conn.upsertData(updateQUery, Arrays.asList(id));
 					continue;
