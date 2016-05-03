@@ -62,7 +62,7 @@ public class MSPSpecLoader {
      * @return
      */    
     public Map<String,String> getUrlMap() {
-        String query = "Select sno,spec_url from  msp_product_url WHERE temp_flag = 'F' LIMIT 500";
+        String query = "SELECT sno,spec_url,product_spec FROM  msp_product_url WHERE temp_flag = 'F' AND section = 'mobiles' AND product_spec IS NULL  OR product_spec = '' LIMIT 500";
         urlMap = new HashMap<>();
         ResultSet rs = conn.executeQuery(query, null);
         try {
@@ -101,7 +101,10 @@ public class MSPSpecLoader {
                          {
                              try{
                                  
-                                 String divVal = driver.findElement(By.xpath("/html/body/div[4]/div[3]/div["+i+"]")).getText();
+                                 String divVal = driver.findElement(By.xpath("//*[@id='msp_body']/div/div[5]/div[2]/div[1]/div/table/tbody/tr["+i+"]")).getText();
+                               
+                              
+                               //*[@id="msp_body"]/div/div[5]/div[2]/div[1]/div/table/tbody/tr[4]
                                  if(divVal.split("\n").length > 1){ // its key - value 
                                       combinedVal = driver.findElement(By.xpath("/html/body/div[4]/div[3]/div["+i+"]")).getText().split("\n");
                                       key = combinedVal[0];
@@ -117,6 +120,8 @@ public class MSPSpecLoader {
                              }
                             
                              catch(Exception e){
+                                 e.printStackTrace();
+                                 saveSkipForNoData(v);
                                   continue;}
         
                          }
