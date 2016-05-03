@@ -11,6 +11,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -22,24 +23,21 @@ import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.Statement;
 
 
-public class Downloader {
+public class ImageDownloader {
 //	private static String host = "jdbc:mysql://103.21.58.156:3306/aapcorjr_dbaapcompare9";
 	//private static String userName = "aapcorjr_adbuser";
 	//private static String password = "adbuseraccess1@34";
 
-	private static String host = "jdbc:mysql://localhost:3306/aapcorjr_aapdb9";
+	private static String host = "jdbc:mysql://localhost:3306/aapcompare_test";
 	private static String userName = "root";
 	private static String password = "";
-
-
 	private static Connection con;
-
-
-
 	private ResultSet rs;
+	
 	public static void main(String[] args) throws Exception {
 		List imgUrl = new ArrayList();
-
+		
+		
 		try{
 
 			// Load the Driver class. 
@@ -66,9 +64,17 @@ public class Downloader {
 
 			while(rs.next())
 			{
-				String img=rs.getString(1);
-
+				String img=rs.getString("image");
+				
+				//img = "https://d1nfvnlhmjw5uh.cloudfront.net/4340-silver-1-desktop-zoom.jpg";
+				//img = img.replace("-normal.jpg", "-zoom.jpg");
+				
+				String tempfileName = "D:\\app_product_images_normal\\"+img.substring(img.lastIndexOf("/") + 1,img.length());
+				
+				 File file = new File(tempfileName);
+				if(!file.exists()){
 				imgUrl.add(img);
+				}
 
 
 			}  
@@ -78,15 +84,13 @@ public class Downloader {
 		}
 
 
-		
-
-		
+				
 	for(int i = 0; i < imgUrl.size();i++)
 		{
 			
 		String image = (String) imgUrl.get(i);
 			
-			downloadFile(image, "C:/Users/jn1831/Desktop/app_product_images/",null);
+			downloadFile(image, "D:/app_product_images_normal/",null);
 		}
 	}
 
@@ -116,11 +120,11 @@ public class Downloader {
 						fileURL.length());
 			}
 
-			System.out.println("Content-Type = " + contentType);
-			System.out.println("Content-Disposition = " + disposition);
-			System.out.println("Content-Length = " + contentLength);
+			//System.out.println("Content-Type = " + contentType);
+			//System.out.println("Content-Disposition = " + disposition);
+			//System.out.println("Content-Length = " + contentLength);
 			System.out.println("fileName = " + fileName);
-
+			
 			// opens input stream from the HTTP connection
 			InputStream inputStream = httpConn.getInputStream();
 			String saveFilePath = saveDir + File.separator + fileName;
@@ -138,6 +142,7 @@ public class Downloader {
 			inputStream.close();
 
 			System.out.println("File downloaded");
+			
 		} else {
 			System.out.println("No file to download. Server replied HTTP code: " + responseCode);
 		}

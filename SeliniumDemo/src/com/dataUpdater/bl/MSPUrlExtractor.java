@@ -61,7 +61,7 @@ public class MSPUrlExtractor {
 		if(rs!=null){
 			try {
 				while(rs.next()){
-					String cat = rs.getString("category");
+					String cat = rs.getString("section");
 					
 					
 					String first_url = rs.getString("first_page_url");
@@ -115,7 +115,7 @@ public class MSPUrlExtractor {
 	   // get the base url data  
 	        try{
 	        driver.get(baseUrl);
-	        for(int i = 4 ;i<=51;i++){
+	        for(int i = 1 ;i<=51;i++){
 	        	if(section.equals("tablets"))
 	        		productUrl = driver.findElement(By.xpath("/html/body/div[4]/div[3]/div[1]/div[5]/div[2]/div[1]/div["+i+"]/div[2]/a")).getAttribute("href");
 	        	else
@@ -125,12 +125,11 @@ public class MSPUrlExtractor {
 	            this.saveData(productUrl, section);
 	        }
 	        
-	        
 	    // for the otherUrls    
 	  for(int j = 2;j<=limit;j++){
 		 
 		  driver.get(otherUrls+j+".html");
-	        for(int i = 4 ;i<=51;i++){
+	        for(int i = 1 ;i<=51;i++){
 	        	if(section.equals("tablets"))
 	        		productUrl = driver.findElement(By.xpath("/html/body/div[4]/div[3]/div[1]/div[5]/div[2]/div[1]/div["+i+"]/div[2]/a")).getAttribute("href");
 	        	else

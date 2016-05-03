@@ -98,5 +98,5 @@ public class SQLQueries {
 	   public static String updateSkipForNoSpecData = "UPDATE msp_product_url SET temp_flag = 'N' where spec_url = ?"; // N stands for data not found
 	   public static String fetchMainCategoryMap= "select * from category_main_url";
 	   public static String fetchAllUrl= "select url from msp_product_url";
-
+	   public static String updateMSPProductTableColumns = "update msp_product_url set model = SUBSTRING_INDEX(url,'/',-1),menu_level1 = ?,menu_level2 = ?,spec_url = REPLACE(REPLACE(CONCAT('http://www.mysmartprice.com/product/',SUBSTRING_INDEX(url,'/',-2),'-other#tab_spec'),'msf','mst'),'msp','mst'),temp_flag = 'f' where section = ? and status = 'i' and model is null"; // x stands for Data Found
 }
