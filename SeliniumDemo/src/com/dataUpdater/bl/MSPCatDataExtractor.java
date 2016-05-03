@@ -91,7 +91,7 @@ public class MSPCatDataExtractor {
 	    System.out.println("Starting at "+new Timestamp(new Date().getTime()));
 		conn = JDBCConnection.getInstance();
 		// String query = SQLQueries.getMspUrls;
-		String mainQuery = "select distinct menu_level1 from msp_product_url where temp_flag = 'F'";
+		String mainQuery = "select distinct menu_level1 from msp_product_url where temp_flag = 'f' and menu_level1 ='Mobiles' ";
 		// String query =
 		// "SELECT DISTINCT section FROM msp_product_url WHERE  menu_level1 = 'mobiles' ORDER BY section;";
 		ResultSet rs1 = conn.executeQuery(mainQuery, null);
@@ -101,13 +101,13 @@ public class MSPCatDataExtractor {
 		try {
 			while (rs1.next()) {
 				String subMenuQuery = "SELECT DISTINCT section FROM msp_product_url WHERE  menu_level1 = '"
-						+ rs1.getString("menu_level1") + "' and temp_flag = 'F' ORDER BY section";
+						+ rs1.getString("menu_level1") + "' and temp_flag = 'f' ORDER BY section";
 				// get the prodct corr to each section
 				ResultSet rs = conn.executeQuery(subMenuQuery, null);
 				urlMap = new HashMap<>();
 				while (rs.next()) {
 					String getProductUrl = "select * from msp_product_url where section = '"
-							+ rs.getString("section") + "' and temp_flag = 'F' LIMIT 100";
+							+ rs.getString("section") + "' and temp_flag = 'f' and model LIKE '%micromax-x370%' LIMIT 100";
 					ResultSet rsProductUrl = conn.executeQuery(getProductUrl,
 							null);
 					urlList = new ArrayList<>();
@@ -167,6 +167,8 @@ public class MSPCatDataExtractor {
 
 			Iterator<String> itr = url.iterator();
 			String currentUrl = "";
+			
+			System.out.println("New product");
 			while (itr.hasNext()) {
 				
 				currentUrl = itr.next();
@@ -175,6 +177,7 @@ public class MSPCatDataExtractor {
 					driver = new HtmlUnitDriver(BrowserVersion.FIREFOX_24);
 					
 					// get to the page
+					
 					driver.get(currentUrl);
 					/*try {
 						WebElement radioButton = driver.findElement(By
@@ -188,53 +191,165 @@ public class MSPCatDataExtractor {
 					// image
 					
 					try{
+						//*[@id="mspSingleImg"]
+						if(driver.findElements(
+								By.xpath("/html/body/div[4]/div[2]/div/div[1]/div[2]/img")).size() != 0){
+							image = driver.findElement(
+									By.xpath("/html/body/div[4]/div[2]/div/div[1]/div[2]/img")).getAttribute(
+											"src");
+						}else if(driver.findElements( By.xpath("//*[@id='mspSingleImg']")).size() != 0){
+							image = driver.findElement(
+                                    By.xpath("//*[@id='mspSingleImg']")).getAttribute(
+                                    "src");
+
+							}
 						
-					image = driver.findElement(
-							By.xpath("//*[@id='mspSingleImg']")).getAttribute(
-							"src");
-					
 					}catch(Exception e){
 						System.out.println("Inside Exception");
 						saveSkipForNoData(currentUrl);
+						e.printStackTrace();
 						continue;
-
 					}
-					for (int i = 3; i <= 13; i++) {
-						
+					for (int i = 1; i <= 11; i++) {
+						vendorUrl =null;
 						// System.out.println(driver.findElement(By.xpath("//*[@id='pricetable']/div["+i+"]/div[2]/div[5]/div[2]/div")).getAttribute("data-url"));
+						//*[@id="pricetable"]/div[1]/div[1]/div[6]/div[1]
+						//*[@id="pricetable"]/div[2]/div[1]/div[6]/div
+						//*[@id="pricetable"]/div[4]/div[1]/div[6]/div[1]
+						
+						
+						//*[@id="pricetable"]/div[1]/div[1]/div[6]/div[1]
+						//*[@id="pricetable"]/div[2]/div[1]/div[6]/div
+						//*[@id="pricetable"]/div[3]/div[1]/div[6]/div[1]/img
+						//*[@id="pricetable"]/div[3]/div[2]/div[6]/div[2]/div[1]
+						//*[@id="pricetable"]/div[3]/div[2]/div[5]/div[2]/div[1]
+						//*[@id="pricetable"]/div[1]/div[1]/div[6]/div[1]
+						//*[@id="pricetable"]/div[1]/div[1]/div[6]/div[1]
+						if(driver.findElements(By.xpath("//*[@id='pricetable']/div[" +i+ "]/div[1]/div[6]/div[1]")).size() !=  0){
 						vendorUrl = driver.findElement(
 								By.xpath("//*[@id='pricetable']/div[" + i
-										+ "]/div[2]/div[5]/div[2]/div"))
+										+ "]/div[1]/div[6]/div[1]"))
 								.getAttribute("data-url");
+						}else if( driver.findElements(
+								By.xpath("//*[@id='pricetable']/div[" + i
+										+ "]/div[1]/div[6]/div"))
+								.size() !=  0){
+							vendorUrl = driver.findElement(
+									By.xpath("//*[@id='pricetable']/div[" + i
+											+ "]/div[1]/div[6]/div"))
+									.getAttribute("data-url");
+						}else if(driver.findElements(
+                                By.xpath("//*[@id='pricetable']/div[" + i
+                                        + "]/div[2]/div[5]/div[2]/div"))
+                          .size() !=  0){
+							vendorUrl = driver.findElement(
+                                    By.xpath("//*[@id='pricetable']/div[" + i
+                                                  + "]/div[2]/div[5]/div[2]/div"))
+                                    .getAttribute("data-url");
+						}
+						System.out.println(vendorUrl);
 						// delivery time
 						// deliveryTime =
 						// driver.findElement(By.xpath("//*[@id='pricetable']/div[3]/div[2]/div[4]/div[1]")).getText();
+						//*[@id="pricetable"]/div[1]/div[1]/div[4]/div[1]
+						if(driver.findElements(
+								By.xpath("//*[@id='pricetable']/div[" + i
+										+ "]/div[1]/div[4]/div[1]")).size() !=  0){
 						deliveryTime = driver.findElement(
 								By.xpath("//*[@id='pricetable']/div[" + i
-										+ "]/div[2]/div[4]/div[1]")).getText();
+										+ "]/div[1]/div[4]/div[1]")).getText();}
+						else if (driver.findElements(
+                                By.xpath("//*[@id='pricetable']/div[" + i
+                                        + "]/div[2]/div[4]/div[1]")).size() !=  0) {
+							deliveryTime = driver.findElement(
+                                    By.xpath("//*[@id='pricetable']/div[" + i
+                                            + "]/div[2]/div[4]/div[1]")).getText();
+							
+						}
 						// System.out.println(deliveryTime);
 
 						// rating
-						rating = driver.findElement(
+						//*[@id="pricetable"]/div[1]/div[1]/div[2]/div/div[1]/div
+						//*[@id="pricetable"]/div[2]/div[1]/div[2]/div/div[1]/div
+						if(driver.findElements(
 								By.xpath("//*[@id='pricetable']/div[" + i
-										+ "]/div[2]/div[2]/div[2]"))
-								.getAttribute("data-callout");
+										+ "]/div[1]/div[2]/div/div[1]/div"))
+								.size() !=  0){
+							rating = driver.findElement(
+								By.xpath("//*[@id='pricetable']/div[" + i
+										+ "]/div[1]/div[2]/div/div[1]/div"))
+								.getAttribute("data-tooltip");
+						} else if ( driver.findElements(
+                                By.xpath("//*[@id='pricetable']/div[" + i
+                                        + "]/div[2]/div[2]/div[2]"))
+                          .size() !=  0){
+							rating = driver.findElement(
+                                    By.xpath("//*[@id='pricetable']/div[" + i
+                                                  + "]/div[2]/div[2]/div[2]"))
+                                    .getAttribute("data-callout");
+						}
 						// emi avaliable
+						//*[@id="pricetable"]/div[3]/div[2]/div[4]/div[1]
+						//*[@id="pricetable"]/div[4]/div[1]/div[3]/div[2]
+						if(driver.findElements(
+								By.xpath("//*[@id='pricetable']/div[" + i
+										+ "]/div[1]/div[3]/div[2]")).size() !=  0){
 						emi = driver.findElement(
 								By.xpath("//*[@id='pricetable']/div[" + i
-										+ "]/div[2]/div[3]/div[1]")).getText();
+										+ "]/div[1]/div[3]/div[2]")).getText();
+						
+						}else if (driver.findElements(
+                                By.xpath("//*[@id='pricetable']/div[" + i
+                                        + "]/div[2]/div[3]/div[1]")).size() !=  0){
+						emi =	driver.findElement(
+                                    By.xpath("//*[@id='pricetable']/div[" + i
+                                                  + "]/div[2]/div[3]/div[1]")).getText();
+						}
+
 						// cod
+						//*[@id="pricetable"]/div[2]/div[1]/div[3]/div[1]
+						if(driver.findElements(
+								By.xpath("//*[@id='pricetable']/div[" + i
+										+ "]/div[1]/div[3]/div[1]"))
+								.size() !=  0){
 						cod = driver.findElement(
 								By.xpath("//*[@id='pricetable']/div[" + i
-										+ "]/div[2]/div[3]/div[3]"))
+										+ "]/div[1]/div[3]/div[1]"))
 								.getAttribute("class");
-
+						}else if(driver.findElements(
+                                By.xpath("//*[@id='pricetable']/div[" + i
+                                        + "]/div[2]/div[3]/div[3]"))
+                          .size() !=  0){
+						cod =	driver.findElement(
+                                    By.xpath("//*[@id='pricetable']/div[" + i
+                                                  + "]/div[2]/div[3]/div[3]"))
+                                    .getAttribute("class");
+							
+						}
 						// System.out.println("URL = "+vendorUrl);
+						//*[@id="pricetable"]/div[2]/div[1]/div[5]/div[1]/span[2]
+						//*[@id="pricetable"]/div[2]/div[1]/div[5]/div[1]
+						if(driver.findElements(
+								By.xpath("//*[@id='pricetable']/div[" + i
+										+ "]/div[1]/div[5]/div[1]"))
+								.size() !=  0){
 						price = driver.findElement(
 								By.xpath("//*[@id='pricetable']/div[" + i
-										+ "]/div[2]/div[5]/div[1]/div[1]"))
+										+ "]/div[1]/div[5]/div[1]"))
 								.getText();
-
+						price = price.replaceAll("[^0-9.]", "");
+						}else if (driver.findElements(
+                                By.xpath("//*[@id='pricetable']/div[" + i
+                                        + "]/div[2]/div[5]/div[1]/div[1]"))
+                          .size() !=  0){
+						price =	driver.findElement(
+                                    By.xpath("//*[@id='pricetable']/div[" + i
+                                                  + "]/div[2]/div[5]/div[1]/div[1]"))
+                                    .getText();
+						price = price.replaceAll("[^0-9.]", "");
+						}
+						
+						if(vendorUrl != null)
 						this.saveData(currentUrl, this.productid, this.section,(currentUrl.substring(currentUrl.lastIndexOf("/") + 1,currentUrl.length())), vendorUrl,price, image, cod, deliveryTime, rating, emi);
 						
 					}
@@ -243,7 +358,7 @@ public class MSPCatDataExtractor {
 				} catch (Exception e) {
 					e.getMessage();
 					saveSkipForNoData(currentUrl);
-					continue;
+					e.printStackTrace();
 					
 					
 				}finally{
