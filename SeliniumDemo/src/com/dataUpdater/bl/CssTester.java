@@ -27,47 +27,15 @@ public class CssTester {
        */
 	
         
-        String url = "http://www.mysmartprice.com/product/mobile/maxx-arc-mx1i-mst4966-other#tab_spec";
+        String url = "http://www.homeshop18.com/zebronics-cm-hd-web-camera-crisp/computers-tablets/computer-peripherals/product:30606449/cid:3285/";
         driver.get(url);
         
-       //   List<WebElement> listTh = driver.findElementsByXPath("//table[contains(@class,'table table-bordered table-condensed')]//tr");
+         List<WebElement> listTh = driver.findElementsByXPath("//span[contains(@id,'hs18Price')]");
 
-         /* for(int i = 0;i<listTh.size();i++){
-              WebElement elem1 =  listTh.get(i);
-              String data = elem1.getText();
-              System.out.println(data); 
-          }*/
-           
-        String  header = "";
-        String  key = "";
-        String  value = "";
-        String combinedVal[] =null; 
-        StringBuilder prdSpec = new StringBuilder();
-
-        for(int i=1;i<=60;i++)
-          {
-              try{    
-                      String divVal = driver.findElement(By.xpath("//*[@id='msp_body']/div/div[5]/div[2]/div[1]/div/table/tbody/tr["+i+"]")).getText();
-                      System.out.println(divVal);
-                      /*if(divVal.split("\n").length > 1){ // its key - value 
-                          combinedVal = driver.findElement(By.xpath("/html/body/div[4]/div[3]/div["+i+"]")).getText().split("\n");
-                          key = combinedVal[0];
-                          value = combinedVal[1];
-                          prdSpec.append(key+"|");
-                          prdSpec.append(value+";");
-                     }else{
-                         header = driver.findElement(By.xpath("/html/body/div[4]/div[3]/div["+i+"]")).getText();
-                         prdSpec.append("#"+header+";");
-                     }*/
-              }
-             
-              catch(Exception e){
-                  e.printStackTrace();
-                 
-                   continue;}
-
-          }
-        System.out.println(prdSpec);
+        for(WebElement elem : listTh){
+            System.out.println(elem.getText());
+        }
+     
        
         driver.close();
     }
