@@ -14,7 +14,10 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
+import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.mysql.jdbc.Connection;
  
  
@@ -234,16 +237,17 @@ public class Crawler {
 	
 	//not working
 	public static void processHomeshop18(String URL) throws SQLException, IOException{
-		Document doc = Jsoup.connect(URL).get();
-		 Elements spans =  doc.select("span[id=hs18Price]");
-
-		// price of a product
-		spans.add(doc.select("span[id=hs18Price]").get(0));
-		String data = spans.text();
-		data = data.replaceAll("[^0-9.]", "");
-		System.out.println(data);
-		//<span id="hs18Price" itemprop="price" title="Price of Samsung Galaxy J7 Dual SIM Mobile Phone">
-		//<span class="WebRupee">Rs.</span>&nbsp;14249</span>
+	    HtmlUnitDriver driver = new HtmlUnitDriver(BrowserVersion.CHROME);
+	    driver.get(URL);
+	    List<WebElement> listTh = driver.findElementsByXPath("//span[contains(@id,'hs18Price')]");
+	    WebElement elem = listTh.get(0);
+            String price = elem.getText().replaceAll("\\D+", "");           
+            System.out.println(price);
+        
+     
+       
+        driver.close();
+		
 		}
 	
 	
