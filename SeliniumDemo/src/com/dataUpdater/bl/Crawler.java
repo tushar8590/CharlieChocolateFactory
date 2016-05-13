@@ -28,6 +28,7 @@ public class Crawler {
 	private static String password = "";
 
 	private static Connection con;
+	
 	public static void main(String[] args) throws SQLException, IOException {
 		
 		List imgUrl = new ArrayList();
@@ -40,7 +41,10 @@ public class Crawler {
 			//Create the connection using the static getConnection method
 			con = (Connection) DriverManager.getConnection (host,userName,password);
 			con.setAutoCommit(false);
-			String query ="SELECT website, url, resolved_url FROM msp_electronics WHERE section = 'mobiles' AND website IN ('shopclues','flipkart','snapdeal','indiatimes','ebay','naaptol','saholic','theitdepot') order by website";
+			String query ="SELECT website, url, resolved_url FROM msp_electronics WHERE resolved_url is not null and website IN ('shopclues','flipkart','snapdeal','indiatimes','naaptol','saholic','theitdepot') order by website";
+
+			
+
 
 			Statement stmt = (Statement) con.createStatement();
 
@@ -59,7 +63,7 @@ public class Crawler {
 				String mspURL=rs.getString("url");
 				String wesiteURL=rs.getString("resolved_url");
 
-				System.out.println(mspURL+" ----- " +websiteName+"-------"+wesiteURL);
+				//System.out.println(mspURL+" ----- " +websiteName+"-------"+wesiteURL);
 				//img = "https://d1nfvnlhmjw5uh.cloudfront.net/4340-silver-1-desktop-zoom.jpg";
 				callProcessMethod(websiteName,wesiteURL);
 				}catch(Exception e){
@@ -98,51 +102,56 @@ public class Crawler {
 		String URl = URL;
 
 		String storeName = website;
-
+		String price = "";
+		System.out.println(website);
 		if(storeName.equalsIgnoreCase("snapdeal")){
-			processSD(URl);
+			price = processSD(URl);
 		}
 		else if(storeName.equalsIgnoreCase("flipkart"))
 		{
-			processFK(URl);
+			price = processFK(URl);
 		}//not working
 		else if(storeName.equalsIgnoreCase("amazon")){
-			processAmazon(URl);
+			price = processAmazon(URl);
 		}
 		else if(storeName.equalsIgnoreCase("shopclues")){
-			processShopClues(URl);
+			price = processShopClues(URl);
 		}
 		else if(storeName.equalsIgnoreCase("infibeam")){
-			processInfiBeam(URl);
+			price = processInfiBeam(URl);
 		}//not working
 		else if(storeName.equalsIgnoreCase("paytm")) {
-			processPaytm(URl);
+			price = processPaytm(URl);
 		}
 		else if(storeName.equalsIgnoreCase("indiatimes"))
 		{
-			processIndiaTimes(URl);
+			price = processIndiaTimes(URl);
 		}//not working
 		else if(storeName.equalsIgnoreCase("homeshop18")){
-			processHomeshop18(URl);
+			price = processHomeshop18(URl);
 		}
 		else if(storeName.equalsIgnoreCase("ebay")){
-			processEbay(URl);
+			price = processEbay(URl);
 		}
 		else if(storeName.equalsIgnoreCase("theitdepot")){
-			processTheitdepot(URl);
+			price = processTheitdepot(URl);
 		}
 		else if(storeName.equalsIgnoreCase("naaptol")){
-			processNaaptol(URl);
+			price = processNaaptol(URl);
 		}
 		else if(storeName.equalsIgnoreCase("saholic")){
-			processSaholic(URl);
+			price = processSaholic(URl);
 		}
-		else{
-			processAskmebazaar(URl);
+		else if(storeName.equalsIgnoreCase("askmebazaar")){
+			price = processAskmebazaar(URl);
+		}else{
+			
 		}
+		  float priceFloat = Float.parseFloat(price);
+		insertUpdatedPrice( priceFloat,  website, URL );
 	}
 
-	public static void processSD(String URL) throws SQLException, IOException{
+	public static String processSD(String URL) throws SQLException, IOException{
 		Document doc = Jsoup.connect(URL).get();
 		Elements spans = new Elements();
 
@@ -151,9 +160,10 @@ public class Crawler {
 		// recommended % of a product
 		spans.add(doc.select("span[class=unitDigit]").get(0));
 		System.out.println(spans.text());
+		return spans.text();
 	}
 
-	public static void processFK(String URL) throws SQLException, IOException{
+	public static String processFK(String URL) throws SQLException, IOException{
 		Document doc = Jsoup.connect(URL).get();
 		Elements spans = new Elements();
 
@@ -163,12 +173,13 @@ public class Crawler {
 		String data = spans.text();
 		data = data.replaceAll("[^0-9]", "");
 		System.out.println(data);
+		return data;
 		//<span class="selling-price omniture-field" data-omnifield="eVar48" data-evar48="34999">Rs. 34,999</span>
 	}
 
 	
 			// need to correct this method for id--- wild card needs to be implemented
-	public static void processAmazon(String URL) throws SQLException, IOException{
+	public static String processAmazon(String URL) throws SQLException, IOException{
 		Document doc = Jsoup.connect(URL).get();
 		Elements spans = new Elements();
 		Elements spans1 =  doc.select("span[id=priceblock_ourprice]");
@@ -178,10 +189,11 @@ public class Crawler {
 		String data = spans1.text();
 		data = data.replaceAll("[^0-9.]", "");
 		System.out.println(data);
+		return data;
 		//<span id="priceblock_saleprice" class="a-size-medium a-color-price"><span class="currencyINR">&nbsp;&nbsp;</span> 6,999.00</span>	}
 	}
 	
-	public static void processShopClues(String URL) throws SQLException, IOException{
+	public static String processShopClues(String URL) throws SQLException, IOException{
 		Document doc = Jsoup.connect(URL).get();
 		Elements spans = new Elements();
 
@@ -191,11 +203,12 @@ public class Crawler {
 		//String data = spans.text();
 		data = data.replaceAll("[^0-9.]", "");
 		System.out.println(data);
+		return data;
 		//<meta itemprop="price" content="2799.00">	
 		}
 
 	 // for iphone its not working fine.
-	public static void processInfiBeam(String URL) throws SQLException, IOException{
+	public static String processInfiBeam(String URL) throws SQLException, IOException{
 		Document doc = Jsoup.connect(URL).get();
 		Elements spans = new Elements();
 
@@ -206,11 +219,12 @@ public class Crawler {
 		String data = spans.text();
 		data = data.replaceAll("[^0-9.]", "");
 		System.out.println(data);
+		return data;
 		//<meta itemprop="price" content="2799.00">	
 		}
 	
 	//not working
-	public static void processPaytm(String URL) throws SQLException, IOException{
+	public static String processPaytm(String URL) throws SQLException, IOException{
 		Document doc = Jsoup.connect(URL).get();
 		Elements spans = new Elements();
 
@@ -219,10 +233,11 @@ public class Crawler {
 		String data = spans.text();
 		data = data.replaceAll("[^0-9.]", "");
 		System.out.println(data);
+		return data;
 		//<span ng-if="!product.product.isOnlyCarCategory">Buy for Rs 4,987</span>
 		}
 	
-	public static void processIndiaTimes(String URL) throws SQLException, IOException{
+	public static String processIndiaTimes(String URL) throws SQLException, IOException{
 		Document doc = Jsoup.connect(URL).get();
 		Elements spans =  new Elements();
 
@@ -231,12 +246,13 @@ public class Crawler {
 		String data = spans.text();
 		data = data.replaceAll("[^0-9.]", "");
 		System.out.println(data);
+		return data;
 		//<span ng-if="!product.product.isOnlyCarCategory">Buy for Rs 4,987</span>
 		}
 	
 	
 	//not working
-	public static void processHomeshop18(String URL) throws SQLException, IOException{
+	public static String processHomeshop18(String URL) throws SQLException, IOException{
 	    HtmlUnitDriver driver = new HtmlUnitDriver(BrowserVersion.CHROME);
 	    driver.get(URL);
 	    List<WebElement> listTh = driver.findElementsByXPath("//span[contains(@id,'hs18Price')]");
@@ -244,14 +260,14 @@ public class Crawler {
             String price = elem.getText().replaceAll("\\D+", "");           
             System.out.println(price);
         
-     
+            return price;
        
-        driver.close();
+       // driver.close();
 		
 		}
 	
 	
-	public static void processEbay(String URL) throws SQLException, IOException{
+	public static String processEbay(String URL) throws SQLException, IOException{
 		Document doc = Jsoup.connect(URL).get();
 		Elements spans = new Elements();
 
@@ -260,10 +276,11 @@ public class Crawler {
 		String data = spans.text();
 		data = data.replaceAll("[^0-9]", "");
 		System.out.println(data);
+		return data;
 		//<div class="topPriceRange" itemprop="price"> Rs. 19,699</div>
 		}
 	
-	public static void processTheitdepot(String URL) throws SQLException, IOException{
+	public static String processTheitdepot(String URL) throws SQLException, IOException{
 		Document doc = Jsoup.connect(URL).get();
 		Elements spans =  new Elements();
 
@@ -272,11 +289,12 @@ public class Crawler {
 		String data = spans.text();
 		data = data.replaceAll("[^0-9]", "");
 		System.out.println(data);
+		return data;
 		//<span class="price">Rs.71509/-</span>
 		}
 	
 	
-	public static void processNaaptol(String URL) throws SQLException, IOException{
+	public static String processNaaptol(String URL) throws SQLException, IOException{
 		Document doc = Jsoup.connect(URL).get();
 		Elements spans =  new Elements();
 		//Elements spans = doc.select("span[class=offer-price]");
@@ -286,11 +304,12 @@ public class Crawler {
 		data = data.replaceAll("[^0-9+]", "");
 		data= StringUtils.substringBefore(data, "+");
 		System.out.println(data);
+		return data;
 		//<span class="offer-price"><span class="rs"><!--Rs.--></span>2,499 <span class="ship-price">+ 99 Shipping</span></span>
 		}
 	
 	
-	public static void processSaholic(String URL) throws SQLException, IOException{
+	public static String processSaholic(String URL) throws SQLException, IOException{
 		Document doc = Jsoup.connect(URL).get();
 		Elements spans =  new Elements();
 		//Elements spans = doc.select("span[class=offer-price]");
@@ -299,10 +318,11 @@ public class Crawler {
 		String data = spans.text();
 		data = data.replaceAll("[^0-9]", "");
 		System.out.println(data);
+		return data;
 		//<span id="sp" class="list-price red bold">11390</span>
 		}
 	
-	public static void processAskmebazaar(String URL) throws SQLException, IOException{
+	public static String processAskmebazaar(String URL) throws SQLException, IOException{
 		Document doc = Jsoup.connect(URL).get();
 		Elements spans =  new Elements();
 		//Elements spans = doc.select("span[class=offer-price]");
@@ -311,6 +331,21 @@ public class Crawler {
 		String data = spans.text();
 		data = data.replaceAll("[^0-9.]", "");
 		System.out.println(data);
+		return data;
 		//	<div class="price special-price">Selling Price: <span>8,500.00</span></div>
 		}
+	
+	public static void insertUpdatedPrice(float price, String website, String resolved_url ){
+	    Statement stmt1;
+		try {
+			stmt1 = con.createStatement();
+			String Updatequery = " Update msp_electronics set latest_temp_prices = "+price+" where  website = '"+website+"' and resolved_url = '"+resolved_url+"'" ;
+		    stmt1.executeUpdate(Updatequery);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    
+	       
+	}
 }
