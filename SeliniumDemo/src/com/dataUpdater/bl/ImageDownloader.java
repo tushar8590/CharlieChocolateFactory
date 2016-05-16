@@ -28,9 +28,12 @@ public class ImageDownloader {
 	//private static String userName = "aapcorjr_adbuser";
 	//private static String password = "adbuseraccess1@34";
 
-	private static String host = "jdbc:mysql://localhost:3306/aapcompare_test";
-	private static String userName = "root";
-	private static String password = "";
+	
+
+
+	private static String host = "jdbc:mysql://209.99.16.94:3306/aapcow9a_aapcompare_stg";
+	private static String userName = "aapcow9a_adbuser";
+	private static String password = "Admin@1234$";
 	private static Connection con;
 	private ResultSet rs;
 	
@@ -54,7 +57,7 @@ public class ImageDownloader {
 
 
 		try {
-			String query ="SELECT distinct image FROM msp_electronics";
+			String query ="SELECT distinct image_msp,image FROM msp_electronics";
 
 			Statement stmt = (Statement) con.createStatement();
 
@@ -65,15 +68,18 @@ public class ImageDownloader {
 			while(rs.next())
 			{
 				String img=rs.getString("image");
+				String img_msp=rs.getString("image_msp");
 				
 				//img = "https://d1nfvnlhmjw5uh.cloudfront.net/4340-silver-1-desktop-zoom.jpg";
-				//img = img.replace("-normal.jpg", "-zoom.jpg");
+				//img = img.replace("-desktop-normal.jpg", "-desktop-big-thumb.jpg");
+				//img = "aapcompare_"+img+".jpg";
+				//img = img.replace(" ", "-");
+				//String tempfileName = "D:\\app_product_images_normal\\"+img.substring(img.lastIndexOf("/") + 1,img.length());
+				String tempfileName = "D:\\"+img;
 				
-				String tempfileName = "D:\\app_product_images_normal\\"+img.substring(img.lastIndexOf("/") + 1,img.length());
-				
-				 File file = new File(tempfileName);
+				File file = new File(tempfileName);
 				if(!file.exists()){
-				imgUrl.add(img);
+				imgUrl.add(img_msp);
 				}
 
 
@@ -84,13 +90,13 @@ public class ImageDownloader {
 		}
 
 
-				
+				System.out.println(imgUrl.size());
 	for(int i = 0; i < imgUrl.size();i++)
 		{
 			
 		String image = (String) imgUrl.get(i);
-			
-			downloadFile(image, "D:/app_product_images_normal/",null);
+			System.out.println(image);
+			downloadFile(image, "D:/app_product_images_normal/delta/",null);
 		}
 	}
 
