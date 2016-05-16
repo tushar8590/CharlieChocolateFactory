@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -17,17 +18,23 @@ import org.jsoup.select.Elements;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
+import com.dataLoader.dao.JDBCConnection;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.mysql.jdbc.Connection;
  
  
 public class Crawler {
+    
+    static{
+        java.util.logging.Logger.getLogger("com.gargoylesoftware").setLevel(Level.OFF); 
+        System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog");
+    }
 	//public static DB db = new DB();
 	private static String host = "jdbc:mysql://localhost:3306/aapcompare_test";
 	private static String userName = "root";
 	private static String password = "";
 
-	private static Connection con;
+	private static JDBCConnection con;
 	
 	public static void main(String[] args) throws SQLException, IOException {
 		
@@ -39,18 +46,15 @@ public class Crawler {
 			Class.forName("com.mysql.jdbc.Driver");
 			// If you are using any other database then load the right driver here.
 			//Create the connection using the static getConnection method
-			con = (Connection) DriverManager.getConnection (host,userName,password);
-			con.setAutoCommit(false);
-			String query ="SELECT website, url, resolved_url FROM msp_electronics WHERE resolved_url is not null and website IN ('shopclues','flipkart','snapdeal','indiatimes','naaptol','saholic','theitdepot') order by website";
+			//con = (Connection) DriverManager.getConnection (host,userName,password);
+			con = JDBCConnection.getInstance();
+			//con.setAutoCommit(false);
+			String query ="SELECT website, url, resolved_url,section FROM msp_electronics WHERE resolved_url is not null and website IN ('shopclues','flipkart','snapdeal','indiatimes','naaptol','saholic','theitdepot') order by website LIMIT 100";
+
+			rs = con.executeQuery(query);
+
 
 			
-
-
-			Statement stmt = (Statement) con.createStatement();
-
-
-			rs = stmt.executeQuery(query);
-
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -337,15 +341,9 @@ public class Crawler {
 	
 	public static void insertUpdatedPrice(float price, String website, String resolved_url ){
 	    Statement stmt1;
-		try {
-			stmt1 = con.createStatement();
 			String Updatequery = " Update msp_electronics set latest_temp_prices = "+price+" where  website = '"+website+"' and resolved_url = '"+resolved_url+"'" ;
-		    stmt1.executeUpdate(Updatequery);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	    
-	       
+		  //  stmt1.executeUpdate(Updatequery);
+			con.upsertData(Updatequery, null);
+		
 	}
 }
