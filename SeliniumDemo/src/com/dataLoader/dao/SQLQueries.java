@@ -90,7 +90,7 @@ public class SQLQueries {
 	   
 	   // MSP related QUeries for unresolved Urls
 	   public static String getUnresolvedUrls = "SELECT id,url,website FROM msp_electronics  WHERE url_mapped='F'";
-	   public static String udpateMspUResolvedUrl = "update msp_electronics set resolved_url = ?, url_mapped = 'T' where product_id = ?";
+	   public static String udpateMspUResolvedUrl = "update msp_electronics set resolved_url = ?, url_mapped = 'T' where product_id = ? and url = ? and website = ?";
 	   public static String udpateMspUResolvedUrlDeffered = "update msp_electronics set url_mapped = 'N' where product_id = ?"; // n stands for data not found
 	   
 	   // MSP related queries for spec udpate

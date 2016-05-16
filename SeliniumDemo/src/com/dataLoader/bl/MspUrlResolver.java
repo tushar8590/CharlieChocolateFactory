@@ -236,6 +236,8 @@ public class MspUrlResolver {
                     
                     params.add(resolvedUrl.toString());
                     params.add(id);
+                    params.add(oldUrl);
+                    params.add(website);
                    
                     conn.upsertData(updateQUery, params);
                     
