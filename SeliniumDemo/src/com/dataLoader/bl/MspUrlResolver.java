@@ -227,9 +227,9 @@ public class MspUrlResolver {
                     else if(website.equalsIgnoreCase("snapdeal"))
                         resolvedUrl.append("?aff_id=37358");
                     else if(website.equalsIgnoreCase("shopclues"))
-                        resolvedUrl.append("?ID:756");
+                        resolvedUrl.append("?id=756");
                     else if(website.equalsIgnoreCase("indiatimes") || website.equalsIgnoreCase("paytm"))
-                        resolvedUrl =   new StringBuilder("http://clk.omgt5.com/?AID=769090&PID=11365&r=").append(resolvedUrl);
+                        resolvedUrl =   new StringBuilder("http://clk.omgt5.com/?AID=769090&PID=11256&r=").append(resolvedUrl);
 					
 					
                     String updateQUery = SQLQueries.udpateMspUResolvedUrl;

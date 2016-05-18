@@ -27,15 +27,14 @@ public class CssTester {
        */
 	
         
-        String url = "http://www.homeshop18.com/zebronics-cm-hd-web-camera-crisp/computers-tablets/computer-peripherals/product:30606449/cid:3285/";
+        String url = "http://shopping.indiatimes.com/mobiles/panasonic/panasonic-love-t35-black/43560/p_B5652855";
         driver.get(url);
         
-         List<WebElement> listTh = driver.findElementsByXPath("//span[contains(@id,'hs18Price')]");
+         List<WebElement> listTh = driver.findElementsByXPath("//span[contains(@class,'offerprice flt')]");
 
-        for(WebElement elem : listTh){
-            System.out.println(elem.getText());
-        }
-     
+         WebElement elem = listTh.get(0);
+         String price = elem.getText().replaceAll("\\D+", "");   
+     System.out.println(price);
        
         driver.close();
     }
