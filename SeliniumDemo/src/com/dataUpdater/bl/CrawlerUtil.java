@@ -146,7 +146,7 @@ public class CrawlerUtil {
         return data;
         //<meta itemprop="price" content="2799.00"> 
         }
-
+// added
      // for iphone its not working fine.
     public static String processInfiBeam(String URL) throws SQLException, IOException{
         Document doc = Jsoup.connect(URL).get();
