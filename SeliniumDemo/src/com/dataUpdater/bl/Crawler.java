@@ -29,7 +29,7 @@ public class Crawler {
         java.util.logging.Logger.getLogger("com.gargoylesoftware").setLevel(Level.OFF); 
         System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog");
     }
-	//public static DB db = new DB();
+	//public static DB db = new DB()  ;
 	private static String host = "jdbc:mysql://localhost:3306/aapcompare_test";
 	private static String userName = "root";
 	private static String password = "";
