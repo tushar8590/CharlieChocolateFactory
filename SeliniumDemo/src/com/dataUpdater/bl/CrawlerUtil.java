@@ -68,7 +68,17 @@ public class CrawlerUtil {
         }
         else if(storeName.equalsIgnoreCase("askmebazaar")){
             price = processAskmebazaar(URl);
-        }else{
+        }
+        else if(storeName.equalsIgnoreCase("maniacstore")){
+            price = processManiacstore(URl);
+        }
+        else if(storeName.equalsIgnoreCase("gadgets360")){
+            price = processgadgets360(URl);
+        }
+        else if(storeName.equalsIgnoreCase("bagittoday")){
+            price = processBagittoday(URl);
+        }        
+        else{
             
         }
           float priceFloat = Float.parseFloat(price);
@@ -223,7 +233,7 @@ public class CrawlerUtil {
         // price of a product
         spans.add(doc.select("div[itemprop=price]").get(0));
         String data = spans.text();
-        data = data.replaceAll("[^0-9]", "");
+        data = data.replaceAll("[^0-9.]", "");
         System.out.println(data);
         return data;
         //<div class="topPriceRange" itemprop="price"> Rs. 19,699</div>
@@ -271,6 +281,39 @@ public class CrawlerUtil {
         //<span id="sp" class="list-price red bold">11390</span>
         }
     
+    public static String processManiacstore(String URL) throws SQLException, IOException{
+    	HtmlUnitDriver driver = new HtmlUnitDriver(BrowserVersion.CHROME);
+        driver.get(URL);
+        List<WebElement> listTh = driver.findElementsByXPath("//span[contains(@id,'product_price')]");
+        WebElement elem = listTh.get(0);
+            String price = elem.getText().replaceAll("[^0-9.]", "");           
+            System.out.println(price);
+        
+            return price;
+        //  <div class="price special-price">Selling Price: <span>8,500.00</span></div>
+        }
+
+    public static String processgadgets360(String URL) throws SQLException, IOException{
+    	HtmlUnitDriver driver = new HtmlUnitDriver(BrowserVersion.CHROME);
+        driver.get(URL);
+        List<WebElement> listTh = driver.findElementsByXPath("//span[contains(@class,'selling_price')]");
+        WebElement elem = listTh.get(0);
+            String price = elem.getAttribute("content").replaceAll("[^0-9.]", "");           
+            System.out.println(price);
+        
+            return price;
+        //  <div class="price special-price">Selling Price: <span>8,500.00</span></div>
+        }
+    public static String processBagittoday(String URL) throws SQLException, IOException{
+    	HtmlUnitDriver driver = new HtmlUnitDriver(BrowserVersion.CHROME);
+        driver.get(URL);
+        List<WebElement> listTh = driver.findElementsByXPath("//span[contains(@class,'main_price')]");
+        WebElement elem = listTh.get(0);
+            String price = elem.getText().toString().replaceAll("[^0-9.]", "");              
+            System.out.println(price);
+        
+            return price;
+        }
     public static String processAskmebazaar(String URL) throws SQLException, IOException{
         Document doc = Jsoup.connect(URL).get();
         Elements spans =  new Elements();
@@ -283,7 +326,7 @@ public class CrawlerUtil {
         return data;
         //  <div class="price special-price">Selling Price: <span>8,500.00</span></div>
         }
-    
+  
     public static void insertUpdatedPrice(float price, String website, String resolved_url,JDBCConnection con ){
         Statement stmt1;
             String Updatequery = " Update msp_electronics set latest_temp_prices = "+price+" where  website = '"+website+"' and resolved_url = '"+resolved_url+"'" ;

@@ -27,13 +27,13 @@ public class CssTester {
        */
 	
         
-        String url = "http://shopping.indiatimes.com/mobiles/panasonic/panasonic-love-t35-black/43560/p_B5652855";
+        String url = "http://www.bagittoday.com/microsoft-office-365-home-premium-product-key-card/pr-526745_c-2451/";
         driver.get(url);
         
-         List<WebElement> listTh = driver.findElementsByXPath("//span[contains(@class,'offerprice flt')]");
+         List<WebElement> listTh = driver.findElementsByXPath("//span[contains(@class,'main_price')]");
 
          WebElement elem = listTh.get(0);
-         String price = elem.getText().replaceAll("\\D+", "");   
+         String price = elem.getText().toString().replaceAll("[^0-9.]", "");   
      System.out.println(price);
        
         driver.close();
