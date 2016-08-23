@@ -99,4 +99,7 @@ public class SQLQueries {
 	   public static String fetchMainCategoryMap= "select * from category_main_url";
 	   public static String fetchAllUrl= "select url from msp_product_url";
 	   public static String updateMSPProductTableColumns = "update msp_product_url set model = SUBSTRING_INDEX(url,'/',-1),menu_level1 = ?,menu_level2 = ?,spec_url = REPLACE(REPLACE(CONCAT('http://www.mysmartprice.com/product/',SUBSTRING_INDEX(url,'/',-2),'-other#tab_spec'),'msf','mst'),'msp','mst'),temp_flag = 'f' where section = ? and status = 'i' and model is null"; // x stands for Data Found
+	   public static String updateMSPElectronicsTableColumns = "update msp_electronics set  menu_level1 = ?, menu_level2 = ?, brand = SUBSTRING_INDEX(model, ' ', 1), website = SUBSTRING_INDEX(url, 'store=',-1),image = CONCAT('app_product_images_normal/aapcompare_',REPLACE(model,' ','-'),'.jpg'), image_zoom = CONCAT('app_product_images_zoom/aapcompare_',REPLACE(model,' ','-'),'_big.jpg' ),image_small = CONCAT('app_product_images_small/aapcompare_',REPLACE(model,' ','-'),'small.jpg') where resolved_url = null";
+	   
+	   // insert into msp_electronics(product_id,section,model,url,price,image,cod,delivery_time,rating,emi_avaliable,temp_flag) values (?,?,?,?,?,?,?,?,?,?,'X')
 }
