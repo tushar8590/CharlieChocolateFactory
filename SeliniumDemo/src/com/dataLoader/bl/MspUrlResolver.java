@@ -19,9 +19,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 
-import org.openqa.selenium.By;
+
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -45,6 +45,7 @@ public class MspUrlResolver {
         java.util.logging.Logger.getLogger("com.gargoylesoftware").setLevel(Level.OFF); 
         System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog");
     }
+    
     Map<String, List<OldUrlMap>> urlMap;
 	static String idBase = "ACNEW";
 	int count;

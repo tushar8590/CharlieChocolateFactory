@@ -40,7 +40,8 @@ public class MSPCatDataExtractor {
 	private static Map<String, Map<String, List<String>>> mainMap;
 	private Map<String, List<String>> subMap;
 	private List<String> urlList;
-
+   
+	
 	public static void main(String[] args) {
 		MSPCatDataExtractor mspcatDe = new MSPCatDataExtractor();
 		mspcatDe.getUrls();
@@ -91,7 +92,7 @@ public class MSPCatDataExtractor {
 	    System.out.println("Starting at "+new Timestamp(new Date().getTime()));
 		conn = JDBCConnection.getInstance();
 		// String query = SQLQueries.getMspUrls;
-		String mainQuery = "select distinct menu_level1 from msp_product_url where temp_flag = 'f' and menu_level1 ='Mobiles' ";
+		String mainQuery = "select distinct menu_level1 from msp_product_url where temp_flag = 'f'  ";
 		// String query =
 		// "SELECT DISTINCT section FROM msp_product_url WHERE  menu_level1 = 'mobiles' ORDER BY section;";
 		ResultSet rs1 = conn.executeQuery(mainQuery, null);

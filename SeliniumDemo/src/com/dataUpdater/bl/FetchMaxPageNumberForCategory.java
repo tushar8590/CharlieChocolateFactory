@@ -26,8 +26,6 @@ public class FetchMaxPageNumberForCategory {
     private static String host = "jdbc:mysql://localhost:3306/aapcompare_test";
     private static String userName = "root";
     private static String password = "";
-
-
     private static Connection con;
 
 
