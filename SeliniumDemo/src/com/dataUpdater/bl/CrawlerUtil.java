@@ -5,6 +5,8 @@ import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -20,7 +22,9 @@ import com.dataLoader.bl.URLResolver;
 import com.dataLoader.dao.JDBCConnection;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebResponse;
 import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlMeta;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -28,6 +32,14 @@ import com.gargoylesoftware.htmlunit.html.HtmlSpan;
 import com.gargoylesoftware.htmlunit.html.HtmlStrong;
 
 public class CrawlerUtil {
+    private static WebClient webClient;
+    static{
+    
+    webClient = new WebClient(BrowserVersion.CHROME);
+    webClient.getOptions().setCssEnabled(false);//if you don't need css
+    webClient.getOptions().setJavaScriptEnabled(false);
+    }
+    
     public static void callProcessMethod(String website, String URL, JDBCConnection con) throws SQLException, IOException{
 
         String URl = URL;
@@ -54,6 +66,12 @@ public class CrawlerUtil {
         }//not working
         else if(storeName.equalsIgnoreCase("paytm")) {
             price = processPaytm(URl);
+            Pattern p = Pattern.compile("-?\\d+");
+            Matcher m = p.matcher(price);
+            while (m.find()) {
+                price = m.group();
+            }
+           // price = price.replaceAll("[^0-9].", "");
         }
         else if(storeName.equalsIgnoreCase("indiatimes"))
         {
@@ -89,6 +107,9 @@ public class CrawlerUtil {
         else{
             
         }
+        if(!storeName.equalsIgnoreCase("paytm"))
+            price = price.replaceAll("[^0-9].", "");
+        
           float priceFloat = Float.parseFloat(price);
         insertUpdatedPrice( priceFloat,  website, URL, con );
     }
@@ -98,80 +119,83 @@ public class CrawlerUtil {
        
         // price of a product
         
-        String price = "";
-        if(doc.select("div[class=price-dtls]").first().attr("sp").toString()!= null){
+        
+       /* if(doc.select("div[class=price-dtls]").first().attr("sp").toString()!= null){
             
              price = doc.select("div[class=price-dtls]").first().attr("sp").toString(); 
             }else{
                 price = doc.select("span[class=pdp-e-i-FINAL]").get(0).toString();
-        }
+        }*/
         // recommended % of a product
         //spans.add(doc.select("span[class=unitDigit]").get(0));
-        System.out.println(price);
-        return price;
-        
-    	/*HtmlSpan elemPrice = (HtmlSpan) page.getByXPath("//span[contains(@class,'payBlkBig')]").get(0);
+       System.out.println(URL);
+        HtmlPage    page = webClient.getPage(URL);
+    	HtmlSpan elemPrice = (HtmlSpan) page.getByXPath("//span[contains(@class,'payBlkBig')]").get(0);
     	String price = elemPrice.getTextContent().replaceAll("\\D+", "");   
-    	System.out.println(price);
+    	//System.out.println(price);
 
     	if( page.getByXPath("//span[contains(@itemprop,'ratingValue')]").size() > 0)
     	{
     		HtmlSpan elemRating = (HtmlSpan) page.getByXPath("//span[contains(@itemprop,'ratingValue')]").get(0);
     		String rating = elemRating.getTextContent();   
-    		System.out.println(rating);
+    		//System.out.println(rating);
     	}
 
     	if(page.getByXPath("//div[contains(@class,'pdpshipping')]").size() > 0){
     		HtmlDivision elemShipping = (HtmlDivision) page.getByXPath("//div[contains(@class,'pdpshipping')]").get(0);
     		String shipping = elemShipping.getTextContent();   
-    		System.out.println(shipping);
+    		//System.out.println(shipping);
     	}
 
     	if(page.getByXPath("//span[contains(@class,'marR10 pincode-emi electronics')]").size() > 0){
     		HtmlSpan elemEmi = (HtmlSpan) page.getByXPath("//span[contains(@class,'marR10 pincode-emi electronics')]").get(0);
     		String emi = elemEmi.getTextContent().replaceAll("\\D+", "");    
-    		System.out.println(emi);
+    	//	System.out.println(emi);
     	}
 
     	if(page.getByXPath("//strong[contains(@class,'stock')]").size() > 0){
     		HtmlStrong elemEmi = (HtmlStrong) page.getByXPath("//strong[contains(@class,'stock')]").get(0);
     		String emi = elemEmi.getTextContent();  
-    		System.out.println(emi);
-    	}*/
+    		//System.out.println(emi);
+    	}
+      //  System.out.println(price);
+        return price;
     }
 
-    public static String processFK(String URL) throws SQLException, IOException{
-        Document doc = Jsoup.connect(URL).get();
+    public static String processFK(String URL){
+        Document doc;
+        try {
+            doc = Jsoup.connect(URL).get();
+        
+        
         Elements spans = new Elements();
 
         // price of a product
         spans.add(doc.select("span[class=selling-price omniture-field]").get(0));
         //spans.add(doc.select("span[class=unitDigit]").get(0));
         String data = spans.text();
-        data = data.replaceAll("[^0-9]", "");
-        System.out.println(data);
+        data = data.replaceAll("[^0-9].", "");
+       // System.out.println(data);
         return data;
         //<span class="selling-price omniture-field" data-omnifield="eVar48" data-evar48="34999">Rs. 34,999</span>
+        }catch (IOException e) {
+            System.out.println("Flipkart "+e.getMessage());
+            return "0";
+        }
     }
 
     
             // need to correct this method for id--- wild card needs to be implemented
-    public static String processAmazon(String URL) throws SQLException, IOException{
-        Document doc = Jsoup.connect(URL).get();
-        Elements spans = new Elements();
-        Elements spans1 =  doc.select("span[id=priceblock_ourprice]");
-        // price of a product
-        //spans.add(doc.select("span[id=color_name_0_price]").get(0));
-        //spans.add(doc.select("span[class=unitDigit]").get(0));
-        String data = spans1.text();
-        data = data.replaceAll("[^0-9.]", "");
-        System.out.println(data);
-        return data;
-        //<span id="priceblock_saleprice" class="a-size-medium a-color-price"><span class="currencyINR">&nbsp;&nbsp;</span> 6,999.00</span> }
+    public static String processAmazon(String URL) {
         
-     /*   HtmlSpan elemPrice = (HtmlSpan) page.getByXPath("//span[contains(@id,'priceblock_ourprice')]").get(0);
+        //<span id="priceblock_saleprice" class="a-size-medium a-color-price"><span class="currencyINR">&nbsp;&nbsp;</span> 6,999.00</span> }
+        HtmlPage page;
+        try {
+            page = webClient.getPage(URL);
+        
+        HtmlSpan elemPrice = (HtmlSpan) page.getByXPath("//span[contains(@id,'priceblock_ourprice')]").get(0);
     	String price = elemPrice.getTextContent().replaceAll("[^0-9.]", "");  
-    	System.out.println(price);
+    	//System.out.println(price);
 
     	if( page.getByXPath("//span[contains(@class,'a-icon-alt')]").size() > 0)
     	{
@@ -183,7 +207,7 @@ public class CrawlerUtil {
     	if(page.getByXPath("//div[contains(@class,'pdpshipping')]").size() > 0){
     		HtmlDivision elemShipping = (HtmlDivision) page.getByXPath("//div[contains(@class,'pdpshipping')]").get(0);
     		String shipping = elemShipping.getTextContent();   
-    		System.out.println(shipping);
+    		//System.out.println(shipping);
     	}
 
     	if(page.getByXPath("//div[contains(@id,'inemi_feature_div')]").size() > 0){
@@ -192,120 +216,110 @@ public class CrawlerUtil {
     		int quit_position = emi.indexOf("per month");
     		emi = emi.substring(0, quit_position);
     		
-    		System.out.println(emi);
+    		//System.out.println(emi);
     	}
 
     	if(page.getByXPath("//span[contains(@class,'a-size-medium a-color-success')]").size() > 0){
     		HtmlSpan elemStock = (HtmlSpan) page.getByXPath("//span[contains(@class,'a-size-medium a-color-success')]").get(0);
     		String stock = elemStock.getTextContent().trim();  
-    		System.out.println(stock);
-    	}*/
+    		//System.out.println(stock);
+    	}
+    	
+    	return price;
+        }
+        catch (FailingHttpStatusCodeException | IOException e) {
+         System.out.println("Amazon "+e.getMessage());
+         return "0";
+        }
     }
     
     public static String processShopClues(String URL) throws SQLException, IOException{
-        Document doc = Jsoup.connect(URL).get();
-        Elements spans = new Elements();
-
-        // price of a product
-        String data = doc.select("meta[itemprop=price]").first().attr("content").toString();
-        //spans.add(doc.select("span[class=unitDigit]").get(0));
-        //String data = spans.text();
-        data = data.replaceAll("[^0-9.]", "");
-        System.out.println(data);
-        return data;
-        //<meta itemprop="price" content="2799.00"> 
+        
         
 
-    	
-    	/*HtmlDivision elemPrice = (HtmlDivision) page.getByXPath("//div[contains(@class,'price')]").get(0);
-    	String price = elemPrice.getTextContent().replaceAll("[^0-9,]", "");  
+        HtmlPage    page = webClient.getPage(URL);
+    	HtmlDivision elemPrice = (HtmlDivision) page.getByXPath("//div[contains(@class,'price')]").get(0);
+    	String price = elemPrice.getTextContent().replaceAll("[^0-9.]", "");  
     	System.out.println(price);
 
     	if( page.getByXPath("//span[contains(@class,'a-icon-alt')]").size() > 0)
     	{
     		HtmlSpan elemRating = (HtmlSpan) page.getByXPath("//*[@id='reviewStarsLinkedCustomerReviews']/i/span").get(0);
     		String rating = elemRating.getTextContent().trim();   
-    		System.out.println(rating);
+    		//System.out.println(rating);
     	}
 
     	if(page.getByXPath("//div[contains(@class,'pdpshipping')]").size() > 0){
     		HtmlDivision elemShipping = (HtmlDivision) page.getByXPath("//div[contains(@class,'pdpshipping')]").get(0);
     		String shipping = elemShipping.getTextContent();   
-    		System.out.println(shipping);
+    		//System.out.println(shipping);
     	}
 
     	if(page.getByXPath("//div[contains(@class,'emi_strt')]").size() > 0){
     		HtmlDivision elemEmi = (HtmlDivision) page.getByXPath("//div[contains(@class,'emi_strt')]").get(0);
     		String emi = elemEmi.getTextContent();    
-    		System.out.println(emi);
+    		//System.out.println(emi);
     	}
 
     	if(page.getByXPath("//span[contains(@class,'strong in-stock')]").size() > 0){
     		HtmlSpan elemStock = (HtmlSpan) page.getByXPath("//span[contains(@class,'strong in-stock')]").get(0);
     		String stock = elemStock.getTextContent().trim();  
-    		System.out.println(stock);
-    	}*/
+    		//System.out.println(stock);
+    	}
+    	return price;
         }
-// added
-     // for iphone its not working fine.
-    public static String processInfiBeam(String URL) throws SQLException, IOException{
-        Document doc = Jsoup.connect(URL).get();
-        Elements spans = new Elements();
 
-        // price of a product
-        //spans.add(doc.select("span[class=price]").get(0));
-        //String data = doc.select("meta[itemprop=price]").first().attr("content").toString();
-        spans.add(doc.select("span[class=price").get(1));
-        String data = spans.text();
-        data = data.replaceAll("[^0-9.]", "");
-        System.out.println(data);
-        return data;
-        //<meta itemprop="price" content="2799.00"> 
+    public static String processInfiBeam(String URL) throws SQLException, IOException{
         
-        
-      /*  HtmlSpan elemPrice = (HtmlSpan) page.getByXPath("//span[contains(@class,'price')]").get(0);
-    	String price = elemPrice.getTextContent().replaceAll("[^0-9,]", "");  
+        HtmlPage    page = webClient.getPage(URL);
+        HtmlSpan elemPrice = (HtmlSpan) page.getByXPath("//span[contains(@class,'price')]").get(0);
+    	String price = elemPrice.getTextContent().replaceAll("[^0-9.]", "");  
     	System.out.println(price);
 
     	if( page.getByXPath("//meta[contains(@itemprop,'ratingValue')]").size() > 0)
     	{
     		HtmlMeta elemRating = (HtmlMeta) page.getByXPath("//meta[contains(@itemprop,'ratingValue')]").get(0);
     		String rating = elemRating.getAttribute("content");   
-    		System.out.println(rating);
-    	}
+    		//System.out.println(rating);
+    	}//
 
     	if(page.getByXPath("//span[contains(@class,'shipping_duration')]").size() > 0){
     		HtmlSpan elemShipping = (HtmlSpan) page.getByXPath("//span[contains(@class,'shipping_duration')]").get(0);
     		String shipping = elemShipping.getTextContent();   
-    		System.out.println(shipping);
+    		//System.out.println(shipping);
     	}
 
     	if(page.getByXPath("//span[contains(@class,'emi-value')]").size() > 0){
     		HtmlSpan elemEmi = (HtmlSpan) page.getByXPath("//span[contains(@class,'emi-value')]").get(0);
     		String emi = elemEmi.getTextContent();    
-    		System.out.println(emi);
+    		//System.out.println(emi);
     	}
 
     	if(page.getByXPath("//span[contains(@class,'strong in-stock')]").size() > 0){
     		HtmlSpan elemStock = (HtmlSpan) page.getByXPath("//span[contains(@class,'strong in-stock')]").get(0);
     		String stock = elemStock.getTextContent().trim();  
-    		System.out.println(stock);
+    		//System.out.println(stock);
     	}
-*/
-        }
+    	return price;
+  }
     
     //not working
     public static String processPaytm(String URL) throws SQLException, IOException{
-        Document doc = Jsoup.connect(URL).get();
-        Elements spans = new Elements();
 
-        // price of a product
-        spans.add(doc.select("span[ng-if=!product.product.isOnlyCarCategory]").get(0));
-        String data = spans.text();
-        data = data.replaceAll("[^0-9.]", "");
-        System.out.println(data);
-        return data;
-        //<span ng-if="!product.product.isOnlyCarCategory">Buy for Rs 4,987</span>
+        WebClient webClient = new WebClient();
+        webClient.getOptions().setCssEnabled(false);//if you don't need css
+        webClient.getOptions().setJavaScriptEnabled(false);
+        Page page = webClient.getPage(URL);
+        WebResponse response = page.getWebResponse();
+        String content = response.getContentAsString();
+        //System.out.println(content);
+        String price = "";
+        if(content.contains("Offer Price")){
+            price = content.substring(content.indexOf("Offer Price") + 11 ,content.indexOf("Offer Price") +23);
+        }
+        System.out.println(price);
+        return price;
+      
         }
     
     public static String processIndiaTimes(String URL) throws SQLException, IOException{
@@ -322,21 +336,21 @@ public class CrawlerUtil {
 			//List<HtmlSpan> listTh =(List<HtmlSpan>) page.getByXPath("//span[contains(@class,'offerprice flt')]").get(0);
 			HtmlSpan elemPrice = (HtmlSpan) page.getByXPath("//span[contains(@class,'offerprice flt')]").get(0);
 			String price = elemPrice.getTextContent().replaceAll("\\D+", "");   
-			System.out.println(price);
+			//System.out.println(price);
 			
 			
 			HtmlSpan elemRating = (HtmlSpan) page.getByXPath("//span[contains(@itemprop,'reviewCount')]").get(0);
 			String rating = elemRating.getTextContent().replaceAll("\\D+", "");   
-			System.out.println(rating);
+			//System.out.println(rating);
 			
 			
 			HtmlDivision elemShipping = (HtmlDivision) page.getByXPath("//div[contains(@class,'pdpshipping')]").get(0);
 			String shipping = elemShipping.getTextContent();   
-			System.out.println(shipping);
+			//System.out.println(shipping);
 			
 			HtmlDivision elemEmi = (HtmlDivision) page.getByXPath("//div[contains(@class,'pdpemi')]").get(0);
 			String emi = elemEmi.getTextContent().replaceAll("\\D+", "");  
-			System.out.println(emi);
+			//System.out.println(emi);
 			
         
 		} catch (FailingHttpStatusCodeException e) {
@@ -355,79 +369,57 @@ public class CrawlerUtil {
     
     //not working
     public static String processHomeshop18(String URL) throws SQLException, IOException{
-        HtmlUnitDriver driver = new HtmlUnitDriver(BrowserVersion.CHROME);
-        driver.get(URL);
-        List<WebElement> listTh = driver.findElementsByXPath("//span[contains(@id,'hs18Price')]");
-        WebElement elem = listTh.get(0);
-            String price = elem.getText().replaceAll("\\D+", "");           
-            System.out.println(price);
         
-            return price;
        
        // driver.close();
-            
-          /*  HtmlSpan elemPrice = (HtmlSpan) page.getByXPath("//span[contains(@id,'hs18Price')]").get(0);
+        HtmlPage    page = webClient.getPage(URL);
+            HtmlSpan elemPrice = (HtmlSpan) page.getByXPath("//span[contains(@id,'hs18Price')]").get(0);
         	String price = elemPrice.getTextContent().replaceAll("\\D+", "");   
-        	System.out.println(price);
+        	//System.out.println(price);
 
         	if( page.getByXPath("//span[contains(@class,'product_rating')]").size() > 0)
         	{
         		HtmlSpan elemRating = (HtmlSpan) page.getByXPath("//span[contains(@class,'product_rating')]").get(0);
         		String rating = elemRating.getTextContent().replaceAll("\\D+", "");   
-        		System.out.println(rating);
+        		//System.out.println(rating);
         	}
 
         	if(page.getByXPath("//div[contains(@class,'pdpshipping')]").size() > 0){
         		HtmlDivision elemShipping = (HtmlDivision) page.getByXPath("//div[contains(@class,'pdpshipping')]").get(0);
         		String shipping = elemShipping.getTextContent();   
-        		System.out.println(shipping);
+        		//System.out.println(shipping);
         	}
 
         	if(page.getByXPath("//span[contains(@class,'easyEMI WebRupee')]").size() > 0){
         		HtmlSpan elemEmi = (HtmlSpan) page.getByXPath("//span[contains(@class,'easyEMI WebRupee')]").get(0);
         		String emi = elemEmi.getTextContent();  
-        		System.out.println(emi);
+        		//System.out.println(emi);
         	}
 
         	if(page.getByXPath("//strong[contains(@class,'stock')]").size() > 0){
         		HtmlStrong elemEmi = (HtmlStrong) page.getByXPath("//strong[contains(@class,'stock')]").get(0);
         		String emi = elemEmi.getTextContent();  
-        		System.out.println(emi);
-        	}*/
+        		//System.out.println(emi);
+        	}
+        	return price;
         
         }
     
     
     public static String processEbay(String URL) throws SQLException, IOException{
-        Document doc = Jsoup.connect(URL).get();
-        Elements spans = new Elements();
-
-        // price of a product
-        spans.add(doc.select("div[itemprop=price]").get(0));
-        String data = spans.text();
-        data = data.replaceAll("[^0-9.]", "");
-        System.out.println(data);
-        return data;
-        //<div class="topPriceRange" itemprop="price"> Rs. 19,699</div>
-        
-        /*HtmlSpan elemPrice = (HtmlSpan) page.getByXPath("//span[contains(@class,'notranslate')]").get(0);
+        HtmlPage    page = webClient.getPage(URL);
+        HtmlSpan elemPrice = (HtmlSpan) page.getByXPath("//span[contains(@class,'notranslate')]").get(0);
     	String price = elemPrice.getAttribute("content");  
-    	System.out.println(price);*/
+    	//System.out.println(price);
+    	return price;
+    	
         }
     
     public static String processTheitdepot(String URL) throws SQLException, IOException{
-        Document doc = Jsoup.connect(URL).get();
-        Elements spans =  new Elements();
-
-        // price of a product
-        spans.add(doc.select("span[class=price]").get(1));
-        String data = spans.text();
-        data = data.replaceAll("[^0-9]", "");
-        System.out.println(data);
-        return data;
+        
         //<span class="price">Rs.71509/-</span>
-      /*  
-        HtmlPage 	page = webClient.getPage(url);
+        
+        HtmlPage 	page = webClient.getPage(URL);
 
     	
     	HtmlDivision elemPrice = (HtmlDivision) page.getByXPath("//div[contains(@class,'price-box')]").get(0);
@@ -437,8 +429,9 @@ public class CrawlerUtil {
     	if(page.getByXPath("//div[contains(@class,'col-sm-3 price-box')]").size() > 0){
     		HtmlDivision elemEmi = (HtmlDivision) page.getByXPath("//div[contains(@class,'col-sm-3 price-box')]").get(0);
     		String emi = elemEmi.getTextContent().replaceAll("[^0-9]", "");    
-    		System.out.println(emi);
-    	}*/
+    	//	System.out.println(emi);
+    	}
+    	return price;
 
         }
     

@@ -4,6 +4,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.io.IOException;
 import java.sql.DriverManager;
@@ -49,7 +50,7 @@ public class CrawlerMultiThreaded {
         // Lets create the object on basis of section and VendirDAta Object
         con = JDBCConnection.getInstance();
         
-        String query ="SELECT website, url, resolved_url,section FROM msp_electronics WHERE resolved_url is not null and website IN ('shopclues','flipkart','snapdeal','indiatimes','naaptol','saholic','theitdepot') and section = 'mobiles' order by section LIMIT 100";
+        String query ="SELECT website, url, resolved_url,section FROM msp_electronics WHERE resolved_url is not null and website IN ('shopclues','ebay','paytm','infibeam','flipkart','snapdeal','indiatimes','naaptol','saholic','theitdepot','amazon','homeshop18','gadgets360')  AND model = 'Apple iPad Air 2' ";
         rs = con.executeQuery(query);
         dataMap = new HashMap<String,List<VendorData>>();
         
@@ -91,8 +92,15 @@ public class CrawlerMultiThreaded {
             list.add(future);
        
         }
-       
+        // to wait for the executor to complete  
         executor.shutdown();
+        try {
+            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
+        }
+        catch (InterruptedException e) {
+            System.out.println(e);
+        }
+      
     }
     
     
@@ -114,8 +122,8 @@ public class CrawlerMultiThreaded {
                     CrawlerUtil.callProcessMethod(obj.getWebsite(),obj.getUrl(),con);
                 }
                 catch (Exception e) {
-                   System.out.println(e.getMessage());
-                    //e.printStackTrace();
+                   //System.out.println(e.getMessage());
+                    e.printStackTrace();
                 }
             });
               return null;
@@ -136,9 +144,7 @@ public class CrawlerMultiThreaded {
     
     }
     
-    
-    
-    
+
 }
 
 

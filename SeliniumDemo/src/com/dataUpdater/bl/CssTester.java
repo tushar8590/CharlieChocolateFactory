@@ -15,7 +15,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import com.dataLoader.bl.URLResolver;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebResponse;
 import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlMeta;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -61,10 +63,10 @@ public class CssTester {
        
        //String  url = " http://www.amazon.in/gp/product/B01H3PDWT0/ref=s9_simh_gw_g107_i4_r";
        
-       String  url = "http://www.naaptol.com/mobile-handsets/adcom-kitkat-a54-quad-core-white/p/12478538.html";
+       String  url = "https://paytm.com/shop/p/apple-ipad-air-2-wifi-16-gb-golden-MOBAPPLE-IPAD-ASMAR4447160141E4C";
     
         
-        driver.get(url);
+      //  driver.get(url);
         
         //List<WebElement> listTh = driver.findElementsByXPath("//span[contains(@class,'main_price')]");
        // List<WebElement> listTh = driver.findElementsByXPath("//span[contains(@class,'selling-price omniture-field')]");
@@ -89,21 +91,37 @@ public class CssTester {
         //div[itemprop=price]
         //span[id=priceblock_ourprice]
         //span[class=selling-price omniture-field]
-        
+       /* String content=driver.getPageSource();
       
         WebClient webClient;
     	webClient = new WebClient(BrowserVersion.CHROME);
         webClient.getOptions().setCssEnabled(false);//if you don't need css
         webClient.getOptions().setJavaScriptEnabled(false);//if you don't need js
-      //*[@id="container"]/div/div[2]/div[2]/div/div/div[1]/div/div[2]/div/div[2]/div[2]/div[1]/div/div[1]
+*/      //*[@id="container"]/div/div[2]/div[2]/div/div/div[1]/div/div[2]/div/div[2]/div[2]/div[1]/div/div[1]
       //  #container > div > div.content > div.nsGi9O > div > div > div:nth-child(1) > div > div._2Cl4hZ > div > div._1MVZfW > div._3ZYEWO > div._2MUtYG > div > div._1vC4OE._37U4_g
         
         try {
-        	HtmlPage 	page = webClient.getPage(url);
+            
+            WebClient webClient = new WebClient();
+            webClient.getOptions().setCssEnabled(false);//if you don't need css
+            webClient.getOptions().setJavaScriptEnabled(false);
+            Page page = webClient.getPage(url);
+            WebResponse response = page.getWebResponse();
+            String content = response.getContentAsString();
+            //System.out.println(content);
+            String price = "";
+            if(content.contains("Offer Price")){
+                price = content.substring(content.indexOf("Offer Price") + 11 ,content.indexOf("Offer Price") +22);
+            }
+            System.out.println(price);
+            
+            
+        	/*HtmlPage 	page = webClient.getPage(url);
 
         	
         	//List<HtmlSpan> listTh =(List<HtmlSpan>) page.getByXPath("//span[contains(@class,'offerprice flt')]").get(0);
-        	HtmlDivision elemPrice = (HtmlDivision) page.getByXPath("//div[contains(@class,'price-box')]").get(0);
+        	List<HtmlSpan> spans =  (List<HtmlSpan>) page.getByXPath("//span[contains(@ng-if,'!product.product.isOnlyCarCategory')]");
+        	HtmlDivision elemPrice = (HtmlDivision) page.getByXPath("//span[contains(@ng-if,'!product.product.isOnlyCarCategory')]").get(0);
         	String price = elemPrice.getTextContent().replaceAll("[^0-9]", "");  
         	System.out.println(price);
 
@@ -114,32 +132,16 @@ public class CssTester {
         		System.out.println(rating);
         	}
 
-        	if(page.getByXPath("//span[contains(@class,'shipping_duration')]").size() > 0){
-        		HtmlSpan elemShipping = (HtmlSpan) page.getByXPath("//span[contains(@class,'shipping_duration')]").get(0);
-        		String shipping = elemShipping.getTextContent();   
-        		System.out.println(shipping);
-        	}
-
-        	if(page.getByXPath("//div[contains(@class,'col-sm-3 price-box')]").size() > 0){
-        		HtmlDivision elemEmi = (HtmlDivision) page.getByXPath("//div[contains(@class,'col-sm-3 price-box')]").get(0);
-        		String emi = elemEmi.getTextContent().replaceAll("[^0-9]", "");    
-        		System.out.println(emi);
-        	}
-
-        	if(page.getByXPath("//span[contains(@class,'strong in-stock')]").size() > 0){
-        		HtmlSpan elemStock = (HtmlSpan) page.getByXPath("//span[contains(@class,'strong in-stock')]").get(0);
-        		String stock = elemStock.getTextContent().trim();  
-        		System.out.println(stock);
-        	}
+        	*/
 
         } catch (FailingHttpStatusCodeException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
         /*List<WebElement> listlogo= driver.findElementsByXPath("//img[contains(@class,'prc-grid__logo')]");
