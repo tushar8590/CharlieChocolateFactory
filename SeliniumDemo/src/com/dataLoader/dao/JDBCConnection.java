@@ -7,12 +7,12 @@ import java.util.List;
 public class JDBCConnection {
 
 	
-	private String host = "jdbc:mysql://localhost:3306/aapcorjr_dbaapcompare9";
-//	private String host = "jdbc:mysql://209.99.16.94:3306/aapcow9a_dbaapcompare9";
-//	private String userName = "aapcow9a_adbuser";
-	private String userName =	"root";
-//	private String password = "Admin@1234$";
-	private String password = "";
+	//private String host = "jdbc:mysql://localhost:3306/aapcorjr_dbaapcompare9";
+	private String host = "jdbc:mysql://209.99.16.94:3306/aapcow9a_dbaapcompare9";
+	private String userName = "aapcow9a_adbuser";
+//	private String userName =	"root";
+	private String password = "Admin@1234$";
+//	private String password = "";
 	private static Connection con;
 	
 	private static JDBCConnection conn = null;

@@ -50,7 +50,7 @@ public class CrawlerMultiThreaded {
         // Lets create the object on basis of section and VendirDAta Object
         con = JDBCConnection.getInstance();
         
-        String query ="SELECT website, url, resolved_url,section FROM msp_electronics WHERE resolved_url is not null and website IN ('shopclues','ebay','paytm','infibeam','flipkart','snapdeal','indiatimes','naaptol','saholic','theitdepot','amazon','homeshop18','gadgets360')  AND model = 'Apple iPad Air 2' ";
+        String query ="SELECT website, url, resolved_url,section,flipkart_product_id FROM msp_electronics WHERE resolved_url is not null and website IN ('shopclues','ebay','paytm','infibeam','flipkart','snapdeal','amazon','homeshop18','gadgets360')  AND model = 'Samsung Galaxy S7 Edge' ";
         rs = con.executeQuery(query);
         dataMap = new HashMap<String,List<VendorData>>();
         
@@ -64,15 +64,20 @@ public class CrawlerMultiThreaded {
                     section_temp = rs.getString("section");
                     dataMap.put(section_temp, vendorList); 
                     vendorList.clear();
-                    vendorList.add(new VendorData(rs.getString("website"),rs.getString("resolved_url")));
+                    if(rs.getString("website").equalsIgnoreCase("flipkart"))
+                    	vendorList.add(new VendorData(rs.getString("website"),rs.getString("flipkart_product_id")));
+                    else
+                    	vendorList.add(new VendorData(rs.getString("website"),rs.getString("resolved_url")));
                 } else if(section_temp.equals("") || section_temp.equals(rs.getString("section"))){
+                	if(rs.getString("website").equalsIgnoreCase("flipkart"))
+                    	vendorList.add(new VendorData(rs.getString("website"),rs.getString("flipkart_product_id")));
+                    else
+                    	
                     vendorList.add(new VendorData(rs.getString("website"),rs.getString("resolved_url")));
                 }
-                
-                
             }
             
-            System.out.println(dataMap);
+          //  System.out.println(dataMap);
             
             
         }
@@ -122,8 +127,8 @@ public class CrawlerMultiThreaded {
                     CrawlerUtil.callProcessMethod(obj.getWebsite(),obj.getUrl(),con);
                 }
                 catch (Exception e) {
-                   //System.out.println(e.getMessage());
-                    e.printStackTrace();
+                   System.out.println(e.getMessage());
+                   // e.printStackTrace();
                 }
             });
               return null;

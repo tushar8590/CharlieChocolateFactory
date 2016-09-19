@@ -49,7 +49,7 @@ public class CrawlerMultiThreadedSecondary {
         // Lets create the object on basis of section and VendirDAta Object
         con = JDBCConnection.getInstance();
         
-        String query ="SELECT website, url, resolved_url,section FROM msp_electronics WHERE resolved_url is not null and website IN ('infibeam','amazon','ebay','homeshop18','askmebazaar','maniacstore','gadgets360','bagittoday') and section IN ('mobiles') order by section LIMIT 100";
+ String query ="SELECT website, url, resolved_url,section FROM msp_electronics WHERE resolved_url is not null and website IN ('infibeam','amazon','ebay','homeshop18','askmebazaar','maniacstore','gadgets360','bagittoday','snapdeal') and section IN ('mobiles')  order by section LIMIT 10";
         rs = con.executeQuery(query);
         dataMap = new HashMap<String,List<VendorData>>();
         
